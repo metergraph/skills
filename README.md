@@ -49,11 +49,11 @@ npx skills add metergraph/skills --list
 
 ```sh
 claude plugin marketplace add metergraph/skills
-claude plugin install metergraph@metergraph-agents
+claude plugin install metergraph@metergraph
 ```
 
 Or inside Claude Code: `/plugin marketplace add metergraph/skills`, then
-`/plugin install metergraph@metergraph-agents`. Plugin skills are namespaced, for
+`/plugin install metergraph@metergraph`. Plugin skills are namespaced, for
 example `/metergraph:metergraph-analyze`. Restart Claude Code after installing.
 
 ### Claude Desktop
@@ -170,7 +170,7 @@ Explain the latest Metergraph report and whether we should switch.
 
 ```
 skills/<name>/SKILL.md           one folder per skill; the folder name is the skill name
-.claude-plugin/marketplace.json  the metergraph-agents marketplace
+.claude-plugin/marketplace.json  the metergraph marketplace
 .claude-plugin/plugin.json       the metergraph plugin, which includes every skill
 scripts/validate.mjs             checks every skill against the rules each client enforces
 scripts/package.sh               builds the per-skill zips attached to each release
