@@ -1,7 +1,7 @@
 {
   "name": "metergraph",
-  "version": "0.4.6",
-  "description": "Set up Metergraph, investigate workspace evidence and analyze model swaps from your coding agent",
+  "version": "0.5.0",
+  "description": "Set up Metergraph, investigate workspace evidence, and choose, evaluate, analyze and rerun model swaps from your coding agent",
   "author": {
     "name": "Metergraph",
     "url": "https://www.metergraph.dev"

@@ -7,6 +7,9 @@ description: Take one classified Metergraph workload to a model-swap recommendat
 
 This skill takes one classified workload to a recommendation: should this
 workload move to a different model, and what would that do to quality and cost.
+It is stage 4 of the `metergraph-model-swap` loop. Choosing the workload,
+candidates and eval first (`metergraph-workloads`, `metergraph-candidates`,
+`metergraph-evals`) makes the result easier to act on, but is not required.
 It adds no tools, scopes or authority. When no Metergraph MCP server is
 connected, stop and use the `metergraph` skill for setup routing. Never ask
 for, echo, store or print a key, token or provider credential, and never read
@@ -63,13 +66,11 @@ page in the Metergraph app.
    `counts` (classified, retained, eligible by capture metadata, missing) and
    the `retained_window`. `stale_checkpoint` means the classification is older
    than the current window.
-3. **Check the sample count.** An analysis evaluates a workload only when it
-   has at least **10 samples** (`min_workload_samples`). Readiness reports this
-   as `sample_minimum` (`met`, the minimum and the classified count) and blocks
-   with `insufficient_samples`; an older server may omit both, so compare
-   `classified_sample_count` with 10 yourself. With fewer than 10, the run still
-   "completes", at no cost, with `no_eligible_workloads` and reason
-   `insufficient_samples`. Below 10, do not start: explain the minimum, the current count and that the
+3. **Check the sample count yourself.** An analysis evaluates a workload only
+   when it has at least **10 samples** (`min_workload_samples`). Readiness may
+   not block below that yet. With fewer than 10, the run still "completes", at
+   no cost, with `no_eligible_workloads` and reason `insufficient_samples`.
+   Below 10, do not start: explain the minimum, the current count and that the
    fix is more traffic for this workload. An analysis re-classifies the current
    capture window, so traces sent since the last classification count and the
    listed count may be stale; if the user says new traffic has arrived, say
@@ -122,7 +123,8 @@ restate what you are starting and proceed. Otherwise ask and wait.
 ## 6. Read the report and recommend
 
 When `report.available` is true, call `metergraph_get_report` with
-`report.analysis_id`. Present:
+`report.analysis_id`. Use the summary format and report link in
+`metergraph-report` when it is installed. Present:
 
 - the report `outcome`: `opportunities`, `no_opportunities`,
   `partial_coverage` or `no_eligible_workloads`;
@@ -145,13 +147,11 @@ instruction.
 
 Explain the result from its reasons; never retry blindly. `no_eligible_workloads`
 with `insufficient_samples` means the workload had fewer than 10 samples in the
-window; the workload's `reason_code`, `trace_count` and `traces_needed` say by
-how much. Rerunning alone gives the same result, so the fix is more traffic
-first. `no_opportunities` means the candidates did not beat the current model
-within the quality bar, which is a real answer. `partial_coverage` and failed
-workloads name what was not evaluated. A completed run with
-`report.available: false` is a missing report: say so and point to the run in
-the Metergraph app.
+window: rerunning alone gives the same result, so the fix is more traffic first. `no_opportunities` means the
+candidates did not beat the current model within the quality bar, which is a
+real answer. `partial_coverage` and failed workloads name what was not
+evaluated. A completed run with `report.available: false` is a missing report:
+say so and point to the run in the Metergraph app.
 
 A rerun is a new, separately approved run. Start it with a new `request_key` and
 `rerun_of_run_id` set to the earlier run, and say what changed (more samples,

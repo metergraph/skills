@@ -135,6 +135,27 @@ the report.
 - Starting a model-swap analysis from your agent
 - Reading what a finished analysis recommends
 
+### The model-swap loop
+
+Six skills take a workload from choice to a rerun. You choose, define and rerun from your
+coding agent, and read the report and inspect evidence in the Metergraph app. Start with
+`metergraph-model-swap`; it loads the others as the loop reaches them.
+
+```
+choose workload → choose traces and models → define or refine eval → run analysis
+      → summary and report link → inspect evidence in the app → refine and rerun ↺
+```
+
+| Skill | Stage |
+| --- | --- |
+| [`metergraph-model-swap`](skills/metergraph-model-swap/SKILL.md) | The whole loop: where you are, what comes next, and the rules every stage keeps |
+| [`metergraph-workloads`](skills/metergraph-workloads/SKILL.md) | Choose a workload: rank by spend with its source, flag spikes and suspect data, check readiness |
+| [`metergraph-candidates`](skills/metergraph-candidates/SKILL.md) | Choose traces and models: environment, candidates, residency and the route settings to change |
+| [`metergraph-evals`](skills/metergraph-evals/SKILL.md) | Define or refine the eval: checks and a rubric from good traces and your code, tested before use |
+| [`metergraph-analyze`](skills/metergraph-analyze/SKILL.md) | Run the analysis: readiness, cost confirmation, start once, follow it |
+| [`metergraph-report`](skills/metergraph-report/SKILL.md) | Summarize: the decision, the numbers behind it, the report link and what to inspect in the app |
+| [`metergraph-iterate`](skills/metergraph-iterate/SKILL.md) | Refine and rerun: one change, a new approved run, an honest comparison |
+
 ## Example prompts
 
 ```
@@ -146,7 +167,11 @@ Why did spend on the summarize route triple yesterday?
 ```
 
 ```
-Could my largest workload run on a cheaper model? Check it's ready before starting anything.
+Plan a model swap for my largest workload.
+```
+
+```
+I checked the report. The grader is wrong on the two pricing cases. Fix the eval and rerun.
 ```
 
 ```
