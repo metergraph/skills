@@ -1,0 +1,17 @@
+{
+  "name": "metergraph-agents",
+  "owner": {
+    "name": "Metergraph",
+    "url": "https://www.metergraph.dev"
+  },
+  "metadata": {
+    "description": "Metergraph skills for setup, investigation and model-swap analysis"
+  },
+  "plugins": [
+    {
+      "name": "metergraph",
+      "source": "./",
+      "description": "Set up Metergraph, investigate workspace evidence and analyze model swaps from your coding agent"
+    }
+  ]
+}

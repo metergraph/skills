@@ -1,0 +1,13 @@
+{
+  "name": "metergraph",
+  "version": "0.4.5",
+  "description": "Set up Metergraph, investigate workspace evidence and analyze model swaps from your coding agent",
+  "author": {
+    "name": "Metergraph",
+    "url": "https://www.metergraph.dev"
+  },
+  "homepage": "https://github.com/metergraph/skills",
+  "repository": "https://github.com/metergraph/skills",
+  "license": "Apache-2.0",
+  "keywords": ["metergraph", "llm", "model-swap", "evals", "agent-access"]
+}
