@@ -5,13 +5,13 @@
     "url": "https://www.metergraph.dev"
   },
   "metadata": {
-    "description": "Metergraph skills for setup, investigation and model-swap analysis"
+    "description": "Metergraph skills for setup, investigation and the model-swap loop"
   },
   "plugins": [
     {
       "name": "metergraph",
       "source": "./",
-      "description": "Set up Metergraph, investigate workspace evidence and analyze model swaps from your coding agent"
+      "description": "Set up Metergraph, investigate workspace evidence, and choose, evaluate, analyze and rerun model swaps from your coding agent"
     }
   ]
 }
