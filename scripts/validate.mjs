@@ -12,6 +12,15 @@ const ALLOWED_KEYS = new Set(["name", "description", "license", "compatibility",
 const NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 // Built from parts, so this file does not itself name what it looks for.
 const PRIVATE = [new RegExp("\\b" + "MET" + "-\\d+\\b", "i"), new RegExp("linear" + "\\.app/", "i"), new RegExp("metergraph" + "-internal", "i"), /\/Users\//, /\/home\//];
+// Exact strings exempt from PRIVATE. The customer-local release is signed by a
+// workflow in the private repository, so verifying it needs that repository's
+// name in the anchored cosign certificate identity, which every public release
+// page also publishes. Only this whole identity is exempt; any other mention of
+// the repository is still reported. Built from parts, like PRIVATE.
+const ALLOWED = [
+  String.raw`^https://github\.com/PioneerSquareLabs/` + "metergraph" + "-internal" +
+    String.raw`/\.github/workflows/byoc-release\.yml@refs/(heads/main|tags/v.+)$`,
+];
 const errors = [];
 
 function frontmatter(text, where) {
@@ -52,8 +61,9 @@ for (const dir of readdirSync(SKILLS).sort()) {
   else if (fields.description.length > 1024) errors.push(`${where}: description is over 1024 characters`);
   if (body.trim().length === 0) errors.push(`${where}: body is empty`);
   if (text.split("\n").length > 500) errors.push(`${where}: over 500 lines; move detail to a references/ file`);
+  const checked = ALLOWED.reduce((rest, allowed) => rest.replaceAll(allowed, ""), text);
   for (const pattern of PRIVATE) {
-    if (pattern.test(text)) errors.push(`${where}: looks like a private reference (${pattern})`);
+    if (pattern.test(checked)) errors.push(`${where}: looks like a private reference (${pattern})`);
   }
   names.push(dir);
 }
