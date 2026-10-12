@@ -84,8 +84,8 @@ Code, `.agents/skills/` for Codex, or `.cursor/skills/` for Cursor.
 
 ## Connect Metergraph
 
-Every skill except `metergraph` needs a connected Metergraph MCP server. Use the
-`metergraph` skill, or follow the
+Every skill except `metergraph` and `metergraph-local-bundle` needs a connected
+Metergraph MCP server. Use the `metergraph` skill, or follow the
 [agent access guide](https://www.metergraph.dev/docs/guides/agent-access/). The
 [MCP server guide](https://www.metergraph.dev/docs/guides/mcp-server/) lists the tools,
 and which access role each one needs.
@@ -101,6 +101,17 @@ Connect Metergraph to your agent and answer questions about the docs.
 - Setting up Metergraph for the first time, on any deployment
 - Connecting Claude Desktop, Claude Code, Codex or Cursor to a workspace
 - Asking what Metergraph can do in your edition
+
+### metergraph-local-bundle
+
+Verify and start the signed commercial customer-local bundle, then hand over to
+`metergraph setup` without exposing local credentials or replacing existing data.
+
+**Use when:**
+
+- Installing the customer-local bundle on a person's own machine
+- Setup reports that the local bundle prerequisite is incomplete
+- Reusing an existing local bundle installation safely
 
 ### metergraph-onboarding
 
