@@ -28,7 +28,7 @@ done
 If any is set, or this is otherwise a hosted/cloud runtime, download, verify,
 extract and start nothing. Prefer an installed `metergraph` whose `--help`
 lists `setup`; otherwise state that the fallback fetches the latest released CLI and
-use `npx --yes metergraph-cli` as the prefix. Run only:
+use `npx --yes metergraph-cli@latest` as the prefix. Run only:
 
 ```sh
 metergraph setup --runtime cloud --deployment customer-local --url http://localhost:8080 --workspace 11111111-1111-4111-8111-111111111111 --skip-skill --json
@@ -236,7 +236,7 @@ status JSON's `workspace` check. The service listens only on localhost:8080.
 ## Run setup
 
 Return to the application repository. Prefer installed `metergraph` only when
-its help lists `setup`; otherwise state that `npx --yes metergraph-cli`
+its help lists `setup`; otherwise state that `npx --yes metergraph-cli@latest`
 fetches the latest released CLI and use it as the prefix. Run with `--json`:
 
 ```sh

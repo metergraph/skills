@@ -71,7 +71,7 @@ The [Metergraph CLI](https://github.com/metergraph/cli) installs the setup skill
 project as part of `setup`, or on its own with no sign in and no network access:
 
 ```sh
-npx --yes metergraph-cli skill install --client codex --runtime local
+npx --yes metergraph-cli@latest skill install --client codex --runtime local
 ```
 
 Use `--client claude` or `--client cursor` for the other agents. The CLI records what it
