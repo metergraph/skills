@@ -18,8 +18,10 @@ only with the tools the capabilities advertise.
 ## 1. Read it
 
 1. `metergraph_get_analysis_run` with the run ID. Continue only when the status
-   is final. If `report.available` is false on a completed run, the report is
-   missing: say so and give the run's page (below).
+   is final. If it is not, show the run's stages the way `metergraph-analyze`
+   does under "Show run progress", and stop. If `report.available` is false
+   on a completed run, the report is missing: say so and give the run's page
+   (below).
 2. `metergraph_get_report` with `report.analysis_id`. Read the `outcome`, each
    workload's `state`, `sample_count` and `reason`, each `model_swap`
    opportunity (`recommendation_status`, `quality_vs_reference`,
