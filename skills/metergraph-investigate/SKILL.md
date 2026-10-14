@@ -19,7 +19,9 @@ chosen a client, runtime and deployment.
 
 ## 1. Discover before reading data
 
-**With the CLI** (preferred when `metergraph --version` works):
+**With the CLI** (preferred when `metergraph --help` lists the read commands
+`status`, `capabilities` and `usage`; an older CLI that only has `doctor` and
+skill commands does not, so start with MCP instead):
 
 1. Run `metergraph status --json`. Continue only when it exits 0 with
    `data.authenticated: true` and `data.workspace.match: true`. When it prints
@@ -61,9 +63,15 @@ incidents, ingestion health or reports.
 ## 2. Fix the question and the bound
 
 Restate the question, the route or workload if known, and an explicit UTC
-window. Windows are UTC: `days: N` means the current UTC day so far plus the
-`N - 1` whole UTC days before it, so today is always partial; `since`
-(inclusive) and `until` (exclusive) give an exact window of at most 90 days.
+window. For grouped usage (`metergraph usage --group-by`, `--today` or
+`--since`, and `metergraph_get_usage_aggregates`), `days: N` means the current
+UTC day so far plus the `N - 1` whole UTC days before it, so today is always
+partial; `since` (inclusive) and `until` (exclusive) give an exact window of at
+most 90 days. The route-by-day read (`metergraph usage --days N` without
+grouping options, and `metergraph_get_usage`) instead covers the last N x 24
+hours, rolling and not aligned to UTC days, so `--days 1` there is not
+"today". Always describe a read by the `window.since` and `window.until` it
+returned.
 Default to the shortest window that answers the question. Then choose the
 smallest tool that can answer:
 
@@ -208,8 +216,12 @@ received (a CLI result carries the same fields under `data.result`, plus
 - **Pricing and attribution**: `pricing.cost` (`exact` or a `lower_bound`) and
   `attribution.level`. A trace cost is a whole-trace total and is never split
   by provider.
-- **Warnings**: every returned `warnings[].code` with its message. Say "no
-  warnings returned" when the list is empty.
+- **Warnings and notices**: every returned `warnings[].code`, with its message
+  from MCP. The CLI prints warning codes but not their text, and reports
+  conditions such as truncation, incomplete evidence or lower-bound pricing
+  as `data.notices` tokens; report those too, and use the MCP tool when the
+  warning text itself is needed. Say "no warnings returned" only when both
+  the warnings and the notices are empty.
 - **Identifiers and links**: trace, request, incident or analysis IDs, and
   `metergraph_links` values exactly as returned. Never construct a link.
 
