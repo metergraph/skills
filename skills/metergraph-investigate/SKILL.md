@@ -43,8 +43,39 @@ that answers the question). Then choose the smallest tool that can answer:
 | Which routes exist or are replay eligible | `metergraph_list_routes` | none needed |
 | Is data arriving | `metergraph_get_ingestion_health` | `days` |
 | Known alert or anomaly | `metergraph_list_incidents` | small `limit` |
-| One failed, slow or costly call | `metergraph_query_traces` with `status`, `route`, `trace_id` or `request_id` | `limit` 1 to 5 |
+| Cost or calls for one prompt, workflow or other tag value | `metergraph_get_usage` with `metadata` (exact pairs), or `metergraph_get_usage_aggregates` with `group_by` including `metadata.<key>` | `days`, small `limit` |
+| One failed, slow or costly call | `metergraph_query_traces` with `status`, `route`, `trace_id`, `request_id` or `metadata` | `limit` 1 to 5 |
 | A finished analysis | `metergraph_list_reports`, then `metergraph_get_report` | small `limit` |
+
+A route is not a prompt. One route (for example `support-reply`) can carry
+several prompt IDs in its metadata (SDK tags), and one prompt ID can run on
+several routes. To answer "which prompt costs most", group by the metadata key
+alone, so each prompt is one row across every route. Add `route` to `group_by`
+only to show how a route splits by prompt. Keep the same `days` on every
+follow-up read, so the examples come from the window you just summarised:
+
+```json
+{"name": "metergraph_get_usage_aggregates", "arguments": {"days": 7, "group_by": ["metadata.prompt_id"]}}
+{"name": "metergraph_query_traces", "arguments": {"days": 7, "metadata": {"prompt_id": "reply-v3"}, "limit": 3}}
+```
+
+Metadata values are exact, case-sensitive opaque strings: `reply-v3` does not
+match `reply-v30`, a call without the key never matches a filter, and several
+filter keys must all match. In a read grouped by a metadata key, calls in the
+window that have no value for the grouped key form the group whose value is
+`null`, and `coverage.reasons` names `metadata_key_missing`. Report that group
+rather than dropping it. If you also filtered on that same key, no such calls
+remain, so there is no `null` group. A `metadata_key_mostly_missing` warning
+means most calls or cost have no value for the key; say so, and suggest
+checking the key's spelling. When `coverage.rows.truncated` is true, the listed
+groups are not the whole window: quote `totals` for the window and
+`coverage.rows.matched` for how many values exist.
+
+The CLI can run the same reads (`metergraph usage --group-by-metadata
+prompt_id --json`, `metergraph traces --metadata prompt_id=reply-v3 --json`)
+only in versions that have these options. Check that `metergraph usage --help`
+lists `--group-by-metadata` (and `metergraph traces --help` lists
+`--metadata`) before you suggest them, and otherwise use the tools above.
 
 Follow `next_cursor` only while you are still inside the agreed bound, and say
 how many pages you read. Never request every trace, every report or unbounded
