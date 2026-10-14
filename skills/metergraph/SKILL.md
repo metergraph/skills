@@ -68,8 +68,16 @@ access from the `METERGRAPH_AGENT_TOKEN` environment variable. Use one sequence:
 | Local shell, new workspace | `metergraph setup --runtime local --client <client> --json --no-browser`, rerun after each approval, then `metergraph status --json`. Add `--signup` for a person with no hosted account. |
 | Local shell, existing workspace | `metergraph login --runtime local --workspace <uuid> --json --no-browser`, then `metergraph status --json`. |
 | Local container (Docker, local dev container) | As a local shell. If the browser cannot reach the container's sign in callback, use the key sequence below. |
-| SSH, Codespaces, Gitpod, Cloud Shell, remote dev container, CI | The person signs in (or signs up) on their own device, opens the Keys page in the workspace the agent should read, creates a coding-agent key with Metadata access, and saves it in this environment's secret settings, or as a CI secret, named `METERGRAPH_AGENT_TOKEN`. Then run `metergraph status --json` and `metergraph usage --json`. Add `--workspace <uuid>` to make a key for another workspace fail. For a non-hosted deployment, also set `METERGRAPH_URL` to its address. |
-| Has a Metadata key but no saved sign in | The same key sequence. A project's committed `.metergraph/project.json` pins the origin and workspace the key must match. |
+| SSH, Codespaces, Gitpod, Cloud Shell, remote dev container, CI: hosted, customer-local or customer-owned AWS | The person signs in (or signs up, on the hosted service only) on their own device, opens the Keys page of the deployment and workspace the agent should read, creates a coding-agent key with Metadata access, and saves it in this environment's secret settings, or as a CI secret, named `METERGRAPH_AGENT_TOKEN`. Then run `metergraph status --json` and `metergraph usage --json`. Add `--workspace <uuid>` to make a key for another workspace fail. For a non-hosted deployment, pass `--url <origin>` (or set `METERGRAPH_URL`) with its address. |
+| SSH, cloud workspace or CI: open-source self-hosted server | There are no accounts and no Keys page. The operator gives the person one of the server's `MG_AGENT_TOKENS` values, which they save as `METERGRAPH_AGENT_TOKEN`. Then run the same commands with `--url <server address>`. |
+| Has a Metadata key but no saved sign in | The same key sequence. If the project has a `.metergraph/project.json`, it pins the origin and workspace the key must match. |
+
+`.metergraph/project.json` names the deployment origin and workspace ID. In a
+public repository, keep it uncommitted (for example in `.gitignore`) unless the
+person agrees to publish those values. In CI for a public repository, the read
+commands' JSON includes workspace IDs and per-route usage: write it to a file or
+a masked step instead of the public job log, and print only what the person
+needs.
 
 Before answering a cost question from the CLI, confirm the workspace and what
 it offers: `metergraph status --json` (the verified workspace must be the one
