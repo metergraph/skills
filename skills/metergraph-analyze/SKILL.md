@@ -164,16 +164,18 @@ completed. No error, no report yet. Next check in about a minute.
   check time. Say when you last checked, and say plainly when the stage has
   not changed since the last check. Never give a percentage, an ETA or a
   time remaining. The run data supports neither.
-- **Finished.** On `completed`, mark every stage done. When
-  `report.available` is true, read the report (step 6) and give any link it
-  returns exactly as given. When it is false, say plainly that no report
-  exists yet.
+- **Finished.** On `completed`, draw the items as returned, like any other
+  check: the stages the run passed through are `✓`, and a stage it never
+  entered stays `–` skipped. When `report.available` is true, read the
+  report (step 6) and give any link it returns exactly as given. When it is
+  false, say plainly that no report exists yet.
 - **Failed.** On `failed`, mark the stage it stopped in with `✗`, give the
   `error_code`, and leave the later stages `○`.
 - **No stage data.** When `run.stages.available` is false, or `stages` is
   missing, show no graphic. Say the stage breakdown is unavailable for this
-  run (`unavailable_reason`), and report only `status` and the timestamps.
-  Never mark stages complete by inference.
+  run (`unavailable_reason`, when present). Report the `status`, the
+  timestamps, the `error_code` if the run failed, and whether a report
+  exists. Never mark stages complete by inference.
 
 ## 6. Read the report and recommend
 
