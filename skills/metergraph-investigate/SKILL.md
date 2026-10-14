@@ -1,6 +1,6 @@
 ---
 name: metergraph-investigate
-description: Investigate a failed or anomalous LLM trace, usage spike or incident through an already connected Metergraph Agent Access server, answering only from bounded, cited evidence. Use after setup is verified; use the metergraph skill first when not connected.
+description: Investigate a failed or anomalous LLM trace, usage spike, incident or whether a code change moved cost through an already connected Metergraph Agent Access server, answering only from bounded, cited evidence. Use after setup is verified; use the metergraph skill first when not connected.
 ---
 
 # Investigate with Metergraph evidence
@@ -107,9 +107,41 @@ window, incomplete or truncated evidence, capability unavailable in this
 deployment, classification pending, ambiguous request match
 (`request_match.ambiguous`), failed analysis, and missing report. An empty page
 does not prove there was no traffic; check ingestion health or a longer bounded
-window before saying so. Do not round, extrapolate or invent totals.
+window before saying so. Do not round, extrapolate or invent totals. Never
+attribute a cost change, or the absence of one, to a code change from source
+code or a git diff; see section 5.
 
-## 5. Worked workflow: one failed trace
+## 5. Code changes and cost: never decide from the diff
+
+When the question is whether a commit, pull request, deploy or config change
+raised, lowered or did not change cost, a git diff is never the evidence. Read
+it to form a hypothesis (a different model, a longer prompt, a new retry loop, a
+changed `max_tokens`, an added tool call), then say it is a hypothesis. Do not
+answer "this commit increased cost", "this commit saved money" or "this commit
+has no cost impact" from code alone, including a diff that touches no model or
+prompt code: wrappers, retries, caching, routing, traffic and provider prices
+change spend without appearing in the diff.
+
+A cost conclusion needs returned Metergraph usage evidence:
+
+1. Establish when the change reached the traffic Metergraph observes, from the
+   user or their deploy record. Merge time is not deploy time. If no one knows,
+   say the comparison cannot be anchored.
+2. Read `metergraph_get_usage` for the same route or workload over comparable,
+   bounded windows before and after that point, and cite both reads as in
+   section 4.
+3. Compare per-call cost and token counts as well as totals, so a traffic
+   change is not mistaken for a code change. Name what else changed in the
+   window when you know it (traffic, provider prices, other deploys).
+4. If either window is incomplete, truncated or warned, if the windows are not
+   comparable, or if the returned data cannot separate traffic by the change,
+   state that the cost impact is unknown and name the next bounded check. Do
+   not fill the gap from the diff.
+
+Present the diff and the usage evidence separately: what the code suggests,
+and what Metergraph measured.
+
+## 6. Worked workflow: one failed trace
 
 1. Discover: context, then capabilities. Confirm the workspace with the user.
 2. Find: `metergraph_query_traces` with `status` set to the failure status, the
