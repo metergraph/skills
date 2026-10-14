@@ -99,33 +99,45 @@ with yesterday up to the same UTC time (`--compare previous-same-time` in the
 CLI). A group missing from a truncated window is unknown, not zero.
 
 A route is not a prompt. One route (for example `support-reply`) can carry
-several prompt IDs in its metadata (SDK tags), so answer "which prompt costs
-most" by grouping on the metadata key, not by route:
+several prompt IDs in its metadata (SDK tags), and one prompt ID can run on
+several routes. To answer "which prompt costs most", group by the metadata key
+alone, so each prompt is one row across every route. Add `route` to `group_by`
+only to show how a route splits by prompt. Keep the same `days` on every
+follow-up read, so the examples come from the window you just summarised:
 
 ```json
-{"name": "metergraph_get_usage_aggregates", "arguments": {"days": 7, "group_by": ["route", "metadata.prompt_id"]}}
-{"name": "metergraph_query_traces", "arguments": {"route": "support-reply", "metadata": {"prompt_id": "reply-v3"}, "limit": 3}}
+{"name": "metergraph_get_usage_aggregates", "arguments": {"days": 7, "group_by": ["metadata.prompt_id"]}}
+{"name": "metergraph_query_traces", "arguments": {"days": 7, "metadata": {"prompt_id": "reply-v3"}, "limit": 3}}
 ```
 
 Metadata values are exact, case-sensitive opaque strings: `reply-v3` does not
-match `reply-v30`, a call without the key never matches, and several keys must
-all match. Calls without the key are the group whose value is `null`, and
-`coverage.reasons` names `metadata_key_missing` (or `metadata_value_ineligible`
-for a non-string or oversize value); say so rather than dropping them.
-`metadata_groups.unlisted` accounts for every call not listed with a value:
-`other_values` (values past the limit, with a group count), `missing_key` and
-`ineligible_value`. Report the spend in `missing_key` plus `ineligible_value`
-as not attributed to any value of the key, so a prompt ranking never reads as
-the whole spend. When `coverage.rows.truncated` is true, the listed groups are
-not the whole window: quote `totals` for the window and
-`coverage.rows.matched` as the number of matched groups. That counts groups,
-not distinct values of the key: with `group_by: ["route", "metadata.prompt_id"]`
-one prompt used on three routes is three groups. For a count of distinct
-values, read with the metadata key as the only dimension. From the CLI, the same
-reads are `metergraph usage --group-by route,metadata.prompt_id --json`
-(`--group-by-metadata prompt_id` is the same dimension, and the way to give a
-key that contains a comma) and
-`metergraph traces --metadata prompt_id=reply-v3 --json`.
+match `reply-v30`, a call without the key never matches a filter, and several
+filter keys must all match. In a read grouped by a metadata key, calls in the
+window that have no value for the grouped key form the group whose value is
+`null`, and `coverage.reasons` names `metadata_key_missing` (or
+`metadata_value_ineligible` for a non-string or oversize value). Report that
+group rather than dropping it. If you also filtered on that same key, no such
+calls remain, so there is no `null` group. A `metadata_key_mostly_missing`
+warning means most calls or cost have no value for the key; say so, and
+suggest checking the key's spelling. `metadata_groups.unlisted` accounts for
+every call not listed with a value: `other_values` (values past the limit, with
+a group count), `missing_key` and `ineligible_value`. Report the spend in
+`missing_key` plus `ineligible_value` as not attributed to any value of the
+key, so a prompt ranking never reads as the whole spend. When
+`coverage.rows.truncated` is true, the listed groups are not the whole window:
+quote `totals` for the window and `coverage.rows.matched` as the number of
+matched groups. That counts groups, not distinct values of the key: with
+`group_by: ["route", "metadata.prompt_id"]` one prompt used on three routes is
+three groups. For a count of distinct values, read with the metadata key as
+the only dimension.
+
+The CLI can run the same reads (`metergraph usage --group-by
+metadata.prompt_id --days 7 --json`, where `--group-by-metadata prompt_id` is
+the same dimension and the way to give a key that contains a comma, and
+`metergraph traces --days 7 --metadata prompt_id=reply-v3 --json`) only in versions that
+have these options. Check that `metergraph usage --help` lists `--group-by`
+(and `metergraph traces --help` lists `--metadata`) before you suggest them,
+and otherwise use the tools above.
 
 Follow `next_cursor` only while you are still inside the agreed bound, and say
 how many pages you read. Never request every trace, every report or unbounded
