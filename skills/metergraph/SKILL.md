@@ -71,6 +71,15 @@ access from the `METERGRAPH_AGENT_TOKEN` environment variable. Use one sequence:
 | SSH, Codespaces, Gitpod, Cloud Shell, remote dev container, CI | The person signs in (or signs up) on their own device, opens the Keys page in the workspace the agent should read, creates a coding-agent key with Metadata access, and saves it in this environment's secret settings, or as a CI secret, named `METERGRAPH_AGENT_TOKEN`. Then run `metergraph status --json` and `metergraph usage --json`. Add `--workspace <uuid>` to make a key for another workspace fail. For a non-hosted deployment, also set `METERGRAPH_URL` to its address. |
 | Has a Metadata key but no saved sign in | The same key sequence. A project's committed `.metergraph/project.json` pins the origin and workspace the key must match. |
 
+Before answering a cost question from the CLI, confirm the workspace and what
+it offers: `metergraph status --json` (the verified workspace must be the one
+the person means) and `metergraph capabilities --json`. Then run the smallest
+bounded `usage` read that answers it, for example
+`metergraph usage --group-by route --today --json` for the most expensive route
+today. Windows are UTC. `metergraph help usage` lists the grouped-usage
+examples, and `metergraph-investigate` covers the rest. A deployment without
+grouped usage exits 14 with a `next_action` that names the read it supports.
+
 When `login`, `setup` or a read cannot finish where it runs, it prints
 `data.next_action`. Follow it: `use_agent_key` lists the person's steps and the
 commands to run afterwards; `replace_agent_key`, `use_metadata_only_key` and
@@ -128,7 +137,7 @@ rather than improvising the analysis steps.
 ## When already connected: bounded investigation
 
 1. Call `metergraph_get_workspace_context` and `metergraph_get_capabilities` first. Verify the intended workspace, deployment profile, available tools, required scopes and privacy classes. Stop on wrong workspace, unavailable capabilities or failed authorization.
-2. Confirm the question, route and explicit time window. Choose the smallest available tool: bounded usage/route metadata for aggregate questions, incidents for known anomalies, or `metergraph_query_traces` with a small limit (start with 1) for a failed/anomalous trace. Follow cursors only within the agreed bound. Never request generic SQL or unbounded data.
+2. Confirm the question, route and explicit UTC time window. Choose the smallest available tool: grouped usage (`metergraph_get_usage_aggregates`, or `metergraph usage --group-by ...`) or bounded usage/route metadata for aggregate questions, incidents for known anomalies, or `metergraph_query_traces` with a small limit (start with 1) for a failed/anomalous trace. Follow cursors only within the agreed bound. Never request generic SQL or unbounded data.
 3. Start with metadata. Retained-content debugging and report evidence are separate content-bearing tools; confirm the user's content intent and capability before calling them. Replay is a separate scope and can send data to a provider and spend money. Obtain explicit bounded execution/data-egress authority before any replay. Read access grants no eval-write, analysis-run or production-mutation authority.
 4. Explain the failure or anomaly using only returned evidence. Cite workspace, time window, provenance, trace/report IDs, completeness/coverage, warnings and working app links when returned. Do not fabricate links. Distinguish no data, incomplete evidence, unavailable capability, classification pending, stale/mismatched identity, failed analysis and missing report. An empty result alone does not prove absence of traffic. Never conclude that a commit, deploy or config change did or did not change cost from source code or a git diff alone; a diff is a hypothesis until bounded usage reads for the same route before and after the change reached production agree, with completeness and warnings cited.
 5. An optional approved replay must be eligible, bounded and non-persistent. Do not claim that it changed production telemetry or fixed the application. Refuse autonomous dashboard mutations or production configuration changes.
