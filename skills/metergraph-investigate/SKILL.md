@@ -47,9 +47,12 @@ chosen a client, runtime and deployment.
 
 Either way, confirm with the user that the workspace ID, the workspace name
 and the deployment profile match the installation they intend. A staging or
-demo workspace is not their production workspace. Stop on a mismatch, an
-authorization error, or revoked or expired access, and tell the human to
-reconnect through their client's secure flow. A capability that is absent, or
+demo workspace is not their production workspace. A mismatch, an
+authorization error, or revoked or expired access belongs to that one path:
+when the CLI cannot read the intended workspace but a connected MCP server
+can (or the other way round), use the path that can. Stop and tell the human
+to reconnect through their client's secure flow only when neither the CLI nor
+MCP can verify the intended workspace. A capability that is absent, or
 has `available: false`, is a blocker to report, not something to guess, retry
 under another name or replace with a dashboard API, generic SQL or an ad hoc
 shell command. Some deployments are content-blind or have no replay,
@@ -72,7 +75,8 @@ smallest tool that can answer:
 | Is data arriving | none; use MCP | `metergraph_get_ingestion_health` | `days` |
 | Known alert or anomaly | none; use MCP | `metergraph_list_incidents` | small `limit` |
 | Cost or calls for one prompt, workflow or other tag value | `metergraph usage --group-by metadata.KEY --json`, or `--metadata KEY=VALUE` | `metergraph_get_usage_aggregates` with `group_by` including `metadata.<key>`, or `metadata` (exact pairs) | days, small limit |
-| One failed, slow or costly call | `metergraph traces --status error --limit 1 --json` (also `--route`, `--metadata`) | `metergraph_query_traces` with `status`, `route`, `trace_id`, `request_id` or `metadata` | limit 1 to 5 |
+| One failed call | `metergraph traces --status error --limit 1 --json` (also `--route`, `--metadata`) | `metergraph_query_traces` with `status` set to the failure status, and `route`, `trace_id`, `request_id` or `metadata` | limit 1 to 5 |
+| One slow or costly call (it may have succeeded) | `metergraph traces --route NAME --limit 5 --json` with no `--status`, then compare cost and span count on that page | `metergraph_query_traces` with `route`, `trace_id`, `request_id` or `metadata`, no `status` | limit 1 to 5 |
 | A finished analysis | none; use MCP | `metergraph_list_reports`, then `metergraph_get_report` | small `limit` |
 
 Use grouped usage (`metergraph usage --group-by`, or
