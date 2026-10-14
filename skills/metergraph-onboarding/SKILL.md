@@ -119,8 +119,8 @@ connection, paid eval rule or provider invocation just to manufacture proof.
 
 A person's first cost question after setup ("which route costs most today")
 is a bounded usage read, not a trace scan: `metergraph usage --group-by route
---today --json` from the CLI, or `metergraph_get_usage_aggregates` when
-capabilities list `usage_aggregates`. Use `metergraph-investigate` for it. A
+--today --json` from a CLI whose `metergraph help usage` lists `--group-by`, or
+`metergraph_get_usage_aggregates` when capabilities list `usage_aggregates`. Use `metergraph-investigate` for it. A
 remote or CI agent reads with the coding-agent Metadata key path in the
 `metergraph` skill, never with the application's ingest key.
 

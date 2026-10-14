@@ -74,11 +74,15 @@ access from the `METERGRAPH_AGENT_TOKEN` environment variable. Use one sequence:
 Before answering a cost question from the CLI, confirm the workspace and what
 it offers: `metergraph status --json` (the verified workspace must be the one
 the person means) and `metergraph capabilities --json`. Then run the smallest
-bounded `usage` read that answers it, for example
-`metergraph usage --group-by route --today --json` for the most expensive route
-today. Windows are UTC. `metergraph help usage` lists the grouped-usage
-examples, and `metergraph-investigate` covers the rest. A deployment without
-grouped usage exits 14 with a `next_action` that names the read it supports.
+bounded `usage` read that answers it. Grouped usage needs a CLI that has it:
+run `metergraph help usage` first, and use `--group-by` only when that help
+lists it (for example `metergraph usage --group-by route --today --json` for
+the most expensive route today). An older CLI has only
+`metergraph usage --days N --json` (cost per route and day); say that grouping
+by provider, model or metadata needs a newer CLI or the
+`metergraph_get_usage_aggregates` tool, and do not invent flags. Windows are
+UTC. `metergraph-investigate` covers the rest. A deployment without grouped
+usage exits 14 with a `next_action` that names the read it supports.
 
 When `login`, `setup` or a read cannot finish where it runs, it prints
 `data.next_action`. Follow it: `use_agent_key` lists the person's steps and the

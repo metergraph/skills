@@ -64,7 +64,10 @@ most one `metadata.<key>`. Cost is
 attributed per call, so a trace that used two providers adds each call's cost
 to that call's provider. Groups come back highest cost first, at most `limit`
 of them; `totals` cover every matching call whatever the limit. From a shell,
-the `metergraph` CLI sends the same read and prints the same evidence:
+the `metergraph` CLI sends the same read and prints the same evidence. Check
+`metergraph help usage` first: use these commands only when it lists
+`--group-by`. An older CLI has only `metergraph usage --days N` (cost per route
+and day); use the tool instead, or say a newer CLI is needed.
 
 | Question | Tool arguments | CLI |
 | --- | --- | --- |
@@ -82,6 +85,13 @@ or narrow the read before naming a "top" group. Name the latency you report:
 `latency.avg_ms` is the mean over `latency.samples` calls that reported one,
 and `latency.p95_ms` is an estimate from a fixed histogram
 (`p95_method: histogram_estimate`), not an exact percentile.
+
+A "costs most" answer needs exact pricing. When `pricing.cost` is
+`lower_bound` (the overall `pricing`, or a group's own), some calls are not
+fully priced, so a group with more unpriced calls can look cheaper than it is.
+Name the group with the highest recorded cost as a lower bound and say the
+ranking is not definitive until pricing is exact; never call it the most
+expensive outright.
 
 A prior-period comparison needs two reads with stated windows. Comparing
 today so far with all of yesterday is not like for like: say so, or compare
@@ -108,7 +118,10 @@ for a non-string or oversize value); say so rather than dropping them.
 as not attributed to any value of the key, so a prompt ranking never reads as
 the whole spend. When `coverage.rows.truncated` is true, the listed groups are
 not the whole window: quote `totals` for the window and
-`coverage.rows.matched` for how many values exist. From the CLI, the same
+`coverage.rows.matched` as the number of matched groups. That counts groups,
+not distinct values of the key: with `group_by: ["route", "metadata.prompt_id"]`
+one prompt used on three routes is three groups. For a count of distinct
+values, read with the metadata key as the only dimension. From the CLI, the same
 reads are `metergraph usage --group-by route,metadata.prompt_id --json`
 (`--group-by-metadata prompt_id` is the same dimension, and the way to give a
 key that contains a comma) and
@@ -190,7 +203,11 @@ A cost conclusion needs returned Metergraph usage evidence:
    with explicit `since` and `until` and the same filters, or
    `metergraph_get_usage` where grouped usage is unavailable), and cite both
    reads as in section 4. Windows of equal length avoid comparing a partial
-   day with a whole one.
+   day with a whole one. Filter both reads to the environment the deployment
+   record names (`environment`), so traffic in another environment that
+   shares the route is not credited to the change. If that environment
+   cannot be isolated (for example the grant or deployment has no
+   environment filter), say the cost impact is unknown.
 3. Compare per-call cost and token counts as well as totals, so a traffic
    change is not mistaken for a code change. Name what else changed in the
    window when you know it (traffic, provider prices, other deploys).
