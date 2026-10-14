@@ -43,24 +43,26 @@ that answers the question). Then choose the smallest tool that can answer:
 | Which routes exist or are replay eligible | `metergraph_list_routes` | none needed |
 | Is data arriving | `metergraph_get_ingestion_health` | `days` |
 | Known alert or anomaly | `metergraph_list_incidents` | small `limit` |
-| Cost or calls for one prompt, workflow or other tag value | `metergraph_get_usage` with `metadata` (exact pairs) or `group_by_metadata` | `days`, small `limit` |
+| Cost or calls for one prompt, workflow or other tag value | `metergraph_get_usage` with `metadata` (exact pairs), or `metergraph_get_usage_aggregates` with `group_by` including `metadata.<key>` | `days`, small `limit` |
 | One failed, slow or costly call | `metergraph_query_traces` with `status`, `route`, `trace_id`, `request_id` or `metadata` | `limit` 1 to 5 |
 | A finished analysis | `metergraph_list_reports`, then `metergraph_get_report` | small `limit` |
 
 A route is not a prompt. One route (for example `support-reply`) can carry
 several prompt IDs in its metadata (SDK tags), so answer "which prompt costs
-most" with `group_by_metadata: "prompt_id"`, not by route:
+most" by grouping on the metadata key, not by route:
 
 ```json
-{"name": "metergraph_get_usage", "arguments": {"days": 7, "group_by_metadata": "prompt_id"}}
+{"name": "metergraph_get_usage_aggregates", "arguments": {"days": 7, "group_by": ["route", "metadata.prompt_id"]}}
 {"name": "metergraph_query_traces", "arguments": {"route": "support-reply", "metadata": {"prompt_id": "reply-v3"}, "limit": 3}}
 ```
 
 Metadata values are exact, case-sensitive opaque strings: `reply-v3` does not
 match `reply-v30`, a call without the key never matches, and several keys must
-all match. Report `metadata_groups.unlisted` when values were cut by the limit
-or calls lacked the key, rather than treating the listed groups as the whole
-window. From the CLI, the same reads are
+all match. Calls without the key are the group whose value is `null`, and
+`coverage.reasons` names `metadata_key_missing`; say so rather than dropping
+them. When `coverage.rows.truncated` is true, the listed groups are not the
+whole window: quote `totals` for the window and `coverage.rows.matched` for how
+many values exist. From the CLI, the same reads are
 `metergraph usage --group-by-metadata prompt_id --json` and
 `metergraph traces --metadata prompt_id=reply-v3 --json`.
 
