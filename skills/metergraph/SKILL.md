@@ -57,6 +57,30 @@ pass the same `--workspace` UUID each time, and give each repository its own
 identity. The SDK warning that repository identity is not configured does not
 stop capture.
 
+## Pick the CLI path for where the agent runs
+
+Check `metergraph --help` first. If the read commands' help lists
+`--agent-token-file`, the CLI also accepts a coding-agent key with Metadata
+access from the `METERGRAPH_AGENT_TOKEN` environment variable. Use one sequence:
+
+| Where the agent runs | Sequence |
+|---|---|
+| Local shell, new workspace | `metergraph setup --runtime local --client <client> --json --no-browser`, rerun after each approval, then `metergraph status --json`. Add `--signup` for a person with no hosted account. |
+| Local shell, existing workspace | `metergraph login --runtime local --workspace <uuid> --json --no-browser`, then `metergraph status --json`. |
+| Local container (Docker, local dev container) | As a local shell. If the browser cannot reach the container's sign in callback, use the key sequence below. |
+| SSH, Codespaces, Gitpod, Cloud Shell, remote dev container, CI | The person signs in (or signs up) on their own device, opens the Keys page in the workspace the agent should read, creates a coding-agent key with Metadata access, and saves it in this environment's secret settings, or as a CI secret, named `METERGRAPH_AGENT_TOKEN`. Then run `metergraph status --json` and `metergraph usage --json`. Add `--workspace <uuid>` to make a key for another workspace fail. For a non-hosted deployment, also set `METERGRAPH_URL` to its address. |
+| Has a Metadata key but no saved sign in | The same key sequence. A project's committed `.metergraph/project.json` pins the origin and workspace the key must match. |
+
+When `login`, `setup` or a read cannot finish where it runs, it prints
+`data.next_action`. Follow it: `use_agent_key` lists the person's steps and the
+commands to run afterwards; `replace_agent_key`, `use_metadata_only_key` and
+`use_workspace_key` mean the key was refused, was broader than Metadata, or
+belongs to another workspace. Never ask the person to paste the key into chat or
+a command, and never put it in a project file. Ingest setup cannot run over SSH,
+in a cloud workspace or in CI; it runs on the person's machine. The Metadata key
+is separate from the application's ingest key and never replaces it. Debug and
+Replay keys are refused by the CLI, not reduced.
+
 ## Route honestly
 
 | Client and runtime | Hosted | Customer-local bundle | Customer AWS | Open source self-hosted |
