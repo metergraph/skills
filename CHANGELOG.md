@@ -9,6 +9,9 @@
 - Require comparable observed usage before describing a code change's cost impact.
 - Show returned analysis stages and report availability without inventing progress or completion estimates.
 - Use the latest stable CLI fallback and keep workspace identity out of public repositories and CI logs.
+- Keep non-hosted setup and unpinned CLI sessions on the appropriate supported path.
+- Match investigation windows, bounds and trace fields to the CLI contract, including rolling legacy windows and filtered trace reads.
+- Preserve successful anomalies and distinguish route latency from per-call latency.
 
 ## 0.5.0
 
