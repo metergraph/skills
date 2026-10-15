@@ -19,10 +19,14 @@ chosen a client, runtime and deployment.
 
 ## 1. Discover before reading data
 
-**With the CLI** (preferred when `metergraph --version` works):
+**With the CLI** (preferred when `metergraph --help` lists `status`,
+`capabilities` and `usage`; an older CLI can run but lack them):
 
-1. Run `metergraph status --json`. Continue only when it exits 0 with
-   `data.authenticated: true` and `data.workspace.match: true`. When it prints
+1. Run `metergraph status --json`. Continue when it exits 0 with
+   `data.authenticated: true` and `data.workspace.match: true`. When `match`
+   is null because no workspace was pinned (a coding-agent key without
+   `--workspace`), name `data.workspace.actual` and continue only after the
+   person confirms it is the workspace they mean. When it prints
    `data.next_action` (for example sign in again, or the coding-agent Metadata
    key path for a remote session), follow it; never ask for the key in chat.
 2. Run `metergraph capabilities --json` and build the plan from
@@ -61,9 +65,12 @@ incidents, ingestion health or reports.
 ## 2. Fix the question and the bound
 
 Restate the question, the route or workload if known, and an explicit UTC
-window. Windows are UTC: `days: N` means the current UTC day so far plus the
-`N - 1` whole UTC days before it, so today is always partial; `since`
-(inclusive) and `until` (exclusive) give an exact window of at most 90 days.
+window. For grouped usage, windows are UTC: `days: N` means the current UTC
+day so far plus the `N - 1` whole UTC days before it, so today is always
+partial; `since` (inclusive) and `until` (exclusive) give an exact window.
+Plain `metergraph usage --days N` (no grouping) is instead the last N x 24
+hours, rolling and not aligned to UTC days; say so when you report it. Keep
+every window within 90 days and within the capabilities' `bounds.max_days`.
 Default to the shortest window that answers the question. Then choose the
 smallest tool that can answer:
 
@@ -76,7 +83,9 @@ smallest tool that can answer:
 | Known alert or anomaly | none; use MCP | `metergraph_list_incidents` | small `limit` |
 | Cost or calls for one prompt, workflow or other tag value | `metergraph usage --group-by metadata.KEY --json`, or `--metadata KEY=VALUE` | `metergraph_get_usage_aggregates` with `group_by` including `metadata.<key>`, or `metadata` (exact pairs) | days, small limit |
 | One failed call | `metergraph traces --status error --limit 1 --json` (also `--route`, `--metadata`) | `metergraph_query_traces` with `status` set to the failure status, and `route`, `trace_id`, `request_id` or `metadata` | limit 1 to 5 |
-| One slow or costly call (it may have succeeded) | `metergraph traces --route NAME --limit 5 --json` with no `--status`, then compare cost and span count on that page | `metergraph_query_traces` with `route`, `trace_id`, `request_id` or `metadata`, no `status` | limit 1 to 5 |
+| One costly call (it may have succeeded) | `metergraph traces --route NAME --limit 5 --json` with no `--status`, then compare cost on that page | `metergraph_query_traces` with `route`, `trace_id`, `request_id` or `metadata`, no `status` | limit 1 to 5 |
+| Which routes are slow (route level, not one call) | `metergraph usage --group-by route --sort p95-latency --json`; CLI `traces` returns no latency | `metergraph_get_usage_aggregates` grouped by route | days, small limit |
+| One slow call | none; CLI `traces` has no latency, so ask for its trace or request ID and use MCP, or send the person to the trace in the app | `metergraph_query_traces` with that `trace_id` or `request_id` | limit 1 |
 | A finished analysis | none; use MCP | `metergraph_list_reports`, then `metergraph_get_report` | small `limit` |
 
 Use grouped usage (`metergraph usage --group-by`, or
@@ -109,8 +118,10 @@ and day); use the tool instead, or say a newer CLI is needed.
 
 Rank only what was returned. When `coverage.rows.truncated` is true (more
 groups matched than `limit`), a ranking by calls, errors or latency covers
-only the listed groups; raise `limit` to `coverage.rows.matched` (at most 200)
-or narrow the read before naming a "top" group. Name the latency you report:
+only the listed groups. Before naming a "top" group, raise `limit` to
+`coverage.rows.matched` when that is at most 200 and at most the
+capabilities' `bounds.max_rows`; otherwise narrow the read. Name the latency
+you report:
 `latency.avg_ms` is the mean over `latency.samples` calls that reported one,
 and `latency.p95_ms` is an estimate from a fixed histogram
 (`p95_method: histogram_estimate`), not an exact percentile.
@@ -270,8 +281,9 @@ and what Metergraph measured.
    `metergraph_query_traces` with `status` set to the failure status, the
    agreed `days` and `limit` 1). If the user gave a request ID and the match is
    ambiguous, list the candidates and ask which one.
-3. Explain from metadata: route, model, provider, tokens, cost, latency, status
-   and span count, with the citations above. If metadata is enough, stop here.
+3. Explain from metadata: route, model, provider, tokens, cost, status and
+   span count, plus latency only when the read returns it (CLI `traces` does
+   not; never infer it from timestamps), with the citations above. If metadata is enough, stop here.
 4. Optional content: with consent, `metergraph_get_trace` for that one trace to
    read the error, tool calls and root-cause classification.
 5. Optional replay: only with explicit approval and when the trace is replay
