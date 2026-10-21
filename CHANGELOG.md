@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+- On the customer-local bundle, give a coding agent analysis access with `bin/agent-key` when the bundle has it. The agent explains each grant and the person chooses which to give; the key goes to a private file the agent never opens or prints. Bundles without the command keep the Keys page route, and the agent never uses the local admin login.
+
 ## 0.6.0
 
 - Add the local-bundle skill for verifying and starting the signed customer-local bundle.
