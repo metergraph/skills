@@ -49,9 +49,14 @@ user:
    `METERGRAPH_AGENT_TOKEN`), and restarts the client.
 3. They come back here; you repeat step 1 and confirm the tool is now listed.
 
-Do not ask them to paste the key into chat, and do not write it to a file for
-them. Until the tool appears, the run can also be started from the analysis
-page in the Metergraph app.
+On the customer-local bundle, if the bundle directory has `bin/agent-key`,
+offer that instead of step 1, as `metergraph-local-bundle` describes: the
+person chooses the grants and the command writes the key to a private file
+without anyone signing in. Run it only after they agree to that exact access.
+
+Do not ask them to paste the key into chat, and never handle the token or
+write it to a file yourself. Until the tool appears, the run can also be
+started from the analysis page in the Metergraph app.
 
 ## 3. Choose a workload and check readiness
 
