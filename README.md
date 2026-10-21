@@ -84,11 +84,19 @@ Code, `.agents/skills/` for Codex, or `.cursor/skills/` for Cursor.
 
 ## Connect Metergraph
 
-Every skill except `metergraph` and `metergraph-local-bundle` needs a connected
-Metergraph MCP server. Use the `metergraph` skill, or follow the
+Every skill except `metergraph` and `metergraph-local-bundle` needs your agent connected
+to a workspace, through either the [Metergraph CLI](https://github.com/metergraph/cli) or
+the Agent Access MCP server. Both reach the same tools with the same key: agents with a
+shell (Claude Code, Codex, Cursor) use the CLI, and clients without one (Claude Desktop,
+ChatGPT) use MCP. Use the `metergraph` skill, or follow the
 [agent access guide](https://www.metergraph.dev/docs/guides/agent-access/). The
 [MCP server guide](https://www.metergraph.dev/docs/guides/mcp-server/) lists the tools,
 and which access role each one needs.
+
+Investigating and choosing a workload need read access (the Metadata role). Saving evals
+and starting analyses need loop access (the Debug role plus evaluation writes, evaluation
+previews and analysis starts), which a workspace owner grants. `metergraph-model-swap`
+checks for it before the loop starts and says how to get it on your deployment.
 
 ## Available skills
 
