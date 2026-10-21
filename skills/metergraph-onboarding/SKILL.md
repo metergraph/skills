@@ -51,7 +51,9 @@ Compose stack. First boot may ingest a demo trace, which is synthetic evidence.
 For hosted OAuth, the connection is the URL-only server added above. For a
 keyed or customer-local connection, reuse the Keys page's client-specific
 instructions, documented in
-https://www.metergraph.dev/docs/guides/agent-access/. The endpoint is
+https://www.metergraph.dev/docs/guides/agent-access/. On the customer-local
+bundle, `bin/agent-key` can issue the key instead; see
+`metergraph-local-bundle`. The endpoint is
 `<origin>/v1/agent/mcp`; the stdio bridge is `metergraph-mcp` with
 `METERGRAPH_URL` and `METERGRAPH_AGENT_TOKEN` in its environment. Verify
 `tools/list`, then `metergraph_get_workspace_context` and

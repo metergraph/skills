@@ -267,6 +267,48 @@ They may instead use their own editor. Never use `cat`, `grep` or any other
 command that prints `.env`, particularly with `!`, because `!` output lands in
 the transcript. A new configuration keeps `admin@example.com` as the email.
 
+## Give the agent analysis access
+
+Setup leaves the agent with Metadata access. Writing evaluations or starting
+analyses needs a coding-agent key with the Debug role and workflow
+permissions. Never sign in as the admin for this, read the admin password, or
+ask the person to give it to you.
+
+If `bin/agent-key` exists in the bundle directory, it issues the key with no
+sign in. It runs in the stack's one-shot bootstrap container, attributes the
+key to the local admin, writes the token only to the private file named by
+`--write-to` (mode 0600) and never prints it. First tell the person what each
+grant allows: the Debug role reads captured prompts and responses;
+`--allow-evaluation-writes` saves evaluation drafts and assignments;
+`--allow-evaluation-previews` tests drafts, and a provider-backed preview also
+needs their egress consent and budget; `--allow-analysis-starts` queues
+analyses that send captured content to their model provider and spend money on
+their account. Ask which they want, then offer the command with only those
+flags, for them to run in their own terminal:
+
+```sh
+cd <bundle_dir>
+./bin/agent-key create --write-to ~/.config/metergraph/agent.env \
+  --role debug --allow-evaluation-writes --allow-evaluation-previews --allow-analysis-starts
+```
+
+Fill in the absolute bundle directory. You may run it yourself only after
+they say yes to that exact access, adding `--yes`, which the command needs
+outside a terminal. Never add a role or permission they did not agree to.
+Keep the file outside every project: do not name the project's `.env` or a
+path inside the bundle, and never open, `cat`, source or print the file. The
+person loads it in the shell that starts the agent
+(`. ~/.config/metergraph/agent.env`) and restarts the agent, whose MCP
+configuration names `METERGRAPH_AGENT_TOKEN`, never the token, as the bundle
+README's "Let your coding agent run analyses" section shows. To change access,
+rerun `create` with `--replace`. `./bin/agent-key list` and
+`./bin/agent-key revoke <key-id>` review and remove keys without showing a
+token.
+
+Without `bin/agent-key` (an older bundle), the person signs in to the
+dashboard themselves and creates the key on the Keys page, following the same
+README section.
+
 ## Recovery and stopping
 
 | State | Action |
@@ -278,6 +320,7 @@ the transcript. A new configuration keeps `admin@example.com` as the email.
 | `local_pgdata` lacks its matching `.env` | Stop and find prior configuration; never remove it |
 | Startup fails | Use status and only the named log; preserve secrets and data |
 | Setup returns a handoff | Relay exact status/next action; do not report success |
+| `bin/agent-key` refuses or the person declines | Change nothing; never fall back to the admin password |
 
 To stop later, follow the bundle README's `stop`. Prefer it over `down`, which
 loses raw payloads in local object storage. Never use `down --volumes`.
