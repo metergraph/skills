@@ -22,9 +22,11 @@ whichever this agent has, and never tell the person the other one is missing.
    `metergraph_get_workspace_context`, then `metergraph_get_capabilities`.
    Say nothing about the CLI.
 3. If the CLI is installed without `tools` and there are no Metergraph MCP
-   tools, say once that this step needs a newer metergraph CLI.
-   `npx --yes metergraph-cli@latest` runs the latest release: use it as the
-   prefix when its help lists `tools`.
+   tools, check `npx --yes metergraph-cli@latest --help`. If it lists
+   `tools`, use it as the prefix. If it does not, these stages need the
+   Metergraph MCP connection: set it up with the `metergraph` skill and keep
+   using the CLI for the reads it has. Do not tell the person to upgrade the
+   CLI for `tools` unless a release's help lists it.
 4. If one path cannot read the intended workspace, use the other. Use the
    `metergraph` skill for setup only when neither can.
 

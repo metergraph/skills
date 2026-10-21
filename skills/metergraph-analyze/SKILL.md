@@ -27,9 +27,11 @@ whichever this agent has, and never tell the person the other one is missing.
    `metergraph_get_workspace_context`, then `metergraph_get_capabilities`.
    Say nothing about the CLI.
 3. If the CLI is installed without `tools` and there are no Metergraph MCP
-   tools, say once that this step needs a newer metergraph CLI.
-   `npx --yes metergraph-cli@latest` runs the latest release: use it as the
-   prefix when its help lists `tools`.
+   tools, check `npx --yes metergraph-cli@latest --help`. If it lists
+   `tools`, use it as the prefix. If it does not, these stages need the
+   Metergraph MCP connection: set it up with the `metergraph` skill and keep
+   using the CLI for the reads it has. Do not tell the person to upgrade the
+   CLI for `tools` unless a release's help lists it.
 4. If one path cannot read the intended workspace, use the other. Use the
    `metergraph` skill for setup only when neither can.
 
@@ -71,13 +73,14 @@ Only a workspace owner grants loop access; **Loop access** in
    request replay, read trace content or report evidence, or replay a trace to
    reach a recommendation.
 
-## 2. When loop access is missing
+## 2. When start access is missing
 
-`metergraph setup` and the default sign-in grant read access only. If
-`metergraph_start_analysis` is not listed, `analysis_start` is unavailable, or
-`data.jobs.loop.available` is false, keep going with the read steps below,
-then tell the person once what to grant for their deployment
-(`deployment_profile`):
+`metergraph setup` and the default sign-in grant read access only. Starting
+needs only the Debug role and **Allow analysis starts**; the evaluation
+permissions belong to the full model-swap workflow, not to this step. If
+`metergraph_start_analysis` is not listed or `analysis_start` is unavailable,
+keep going with the read steps below, then tell the person once what to grant
+for their deployment (`deployment_profile`):
 
 - **Hosted** (`managed`). When the agent has a shell and `metergraph help
   login` lists `--access`, run `metergraph login --access loop` with the
@@ -91,7 +94,9 @@ then tell the person once what to grant for their deployment
   restarts the agent.
 - **Customer-local bundle** (`local`). The bundle's `bin/agent-key`, as
   `metergraph-local-bundle` describes. Explain what each grant allows; run
-  `./bin/agent-key create --role debug --allow-evaluation-writes --allow-evaluation-previews --allow-analysis-starts --write-to ~/.config/metergraph/agent.env`
+  `./bin/agent-key create --role debug --allow-analysis-starts --write-to ~/.config/metergraph/agent.env`
+  (add `--allow-evaluation-writes --allow-evaluation-previews` only if they also
+  want the agent to write and test evaluations)
   in the bundle directory (adding `--yes`) only after the person agrees to
   exactly that access, or let them run it in their own terminal. Never add a
   grant they did not agree to. They load the file and restart the agent as
