@@ -271,7 +271,8 @@ the transcript. A new configuration keeps `admin@example.com` as the email.
 
 Setup leaves the agent with Metadata access. Writing evaluations or starting
 analyses needs a coding-agent key with the Debug role and workflow
-permissions. Never sign in as the admin for this, read the admin password, or
+permissions. A newer CLI's setup JSON says so in `data.agent_access`, whose
+`offer.command` is the command below. Never sign in as the admin for this, read the admin password, or
 ask the person to give it to you.
 
 If `bin/agent-key` exists in the bundle directory, it issues the key with no
