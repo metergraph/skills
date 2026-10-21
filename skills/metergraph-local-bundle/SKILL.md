@@ -275,14 +275,14 @@ They may instead use their own editor. Never use `cat`, `grep` or any other
 command that prints `.env`, particularly with `!`, because `!` output lands in
 the transcript. A new configuration keeps `admin@example.com` as the email.
 
-## Give the agent loop access
+## Give the agent the Debug role and workflow permissions
 
-Setup leaves the agent with read access (Metadata). Writing evaluations or
-starting analyses needs a coding-agent key with the Debug role and workflow
-permissions; all four grants below together are loop access, which the
-model-swap loop uses. A newer CLI's setup JSON says so in `data.agent_access`, whose
-`offer.command` is the command below. Never sign in as the admin for this, read the admin password, or
-ask the person to give it to you.
+Setup leaves the agent with the Metadata role. Writing evaluations or starting
+analyses needs a coding-agent key with the Debug role and workflow
+permissions; a model swap uses all four grants below. A newer CLI's setup
+JSON says so in `data.agent_access`, whose `offer.command` is the command
+below. Never sign in as the admin for this, read the admin password, or ask the
+person to give it to you.
 
 If `bin/agent-key` exists in the bundle directory, it issues the key with no
 sign in. It runs in the stack's one-shot bootstrap container, attributes the
