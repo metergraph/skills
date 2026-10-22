@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Start a classification from the agent with `metergraph_start_classification` when nothing is classified yet and the person does not want to wait, or the traffic has changed. It needs Allow analysis starts, asks for approval first because it sends captured content to the provider, and is never a routine step before an analysis.
 - Work through the `metergraph` CLI or the Agent Access MCP server, whichever the agent has. The model-swap loop skills share one discovery step that uses the CLI's `tools` commands when the installed CLI has them and MCP otherwise, and each tool is called the same way on both paths. From the CLI, a call that writes, starts work or calls a provider takes `--yes` only after the person approves that exact call. The skills no longer report a missing MCP server when the CLI works, or the reverse, and setup and investigation fall back to the other path instead of stopping.
 - Name access by the job it does. Read access is the Metadata role; loop access is the Debug role plus evaluation writes, evaluation previews and analysis starts. The loop checks loop access once before it starts and says how to get it on each deployment: `metergraph login --access loop` or the Keys page on the hosted service, `bin/agent-key` on the customer-local bundle, and not offered on customer-owned AWS or the open-source server.
 - Correct the access needed to start an analysis: the Debug role plus Allow analysis starts.
