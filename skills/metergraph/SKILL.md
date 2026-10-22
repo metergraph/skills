@@ -187,7 +187,7 @@ installed; it walks the whole loop and hands each stage to its own skill. The
 loop needs loop access (the Debug role plus Allow evaluation writes, Allow
 evaluation previews and Allow analysis starts), which only a workspace owner
 grants; that skill checks for it before the loop starts and says how to get it
-on each deployment. If it is not installed, offer to install the skills (`npx skills add metergraph/skills`, or in
+on each deployment. If it is not installed, offer to install the skills (a separate verified installation from the skills repository, or in
 Claude Code and Claude Desktop the plugin marketplace `metergraph/skills`)
 rather than improvising the analysis steps.
 
