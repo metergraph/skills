@@ -109,10 +109,39 @@ samples**. Below that it completes with `no_eligible_workloads`; the fix is
 more traffic, not a rerun. `stale_checkpoint` means the classification is
 older than the current window.
 
-## 5. When nothing is classified yet
+## 5. When nothing is classified yet, or the traffic has changed
 
 An empty list with `classification_pending` or `no_traces` means classification
-has not run. No agent tool starts classification on its own. Tell the person:
+has not run. Metergraph classifies on its own soon after the first usable
+traces and then about once a day, so usually the right move is to wait and
+list again.
+
+`metergraph_start_classification` queues a classification-only run now. It
+never analyzes or generates a report. Call it only when one of these holds,
+never as a routine step before every analysis:
+
+- the list is empty with `classification_pending` and the person wants to go
+  on now rather than wait;
+- the person says their traffic has changed (a new feature, route or prompt)
+  since the classification shown, or `stale_checkpoint` says the
+  classification is older than the current window.
+
+It needs **Allow analysis starts** (`agent:analysis-run`) and is listed only
+when the key has it. It sends captured content to the configured provider and
+costs a small amount, so say so in one line and get a yes before the first
+call. Pass a fresh `request_key` and reuse it if you retry the same request.
+The answers mean:
+
+- `analysis_active`: a run is already going. Follow that `run_id` instead.
+- `precondition_failed` with `too_few_classifiable_traces`: fewer usable
+  traces than `minimum_traces`. The fix is more traffic; do not retry.
+- `request.replayed: true`: this key already started that run. Follow it.
+
+Follow the returned run with `metergraph_get_analysis_run` until it reports the
+classification complete or failed, then call
+`metergraph_list_classified_workloads` and continue from step 1.
+
+Without the tool, tell the person:
 
 1. Open the **Opportunities** page in the Metergraph app and choose **Find
    opportunities**.

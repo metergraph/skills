@@ -120,7 +120,8 @@ from the analysis page in the Metergraph app.
    (`source_run_id`, `pattern_id`, `pattern_set_version`). Keep the selection
    reference exactly as returned; the name is a label, not identity. An empty
    list with `no_traces` or `classification_pending` means there is nothing to
-   analyze yet: say so and point to sending more traffic.
+   analyze yet: say so and point to sending more traffic, or see
+   `metergraph-workloads` step 5 on starting a classification.
 2. For the workload the user cares about, `metergraph_get_workload_readiness`
    with that selection reference. Report `blocking_reasons`, the
    `counts` (classified, retained, eligible by capture metadata, missing) and
