@@ -2,7 +2,7 @@
 // Checks every skill under skills/ against the rules the supported clients
 // enforce, so a skill that installs in one client installs in all of them.
 // Usage: node scripts/validate.mjs
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, lstatSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
@@ -36,9 +36,19 @@ function frontmatter(text, where) {
   return { fields, body: text.slice(end + 5) };
 }
 
+// Inspect every descendant without following links, including references and assets.
+function inspectTree(dir) {
+  for (const name of readdirSync(dir)) {
+    const file = join(dir, name);
+    const stat = lstatSync(file);
+    if (stat.isDirectory()) inspectTree(file);
+    else if (!stat.isFile()) errors.push(`${file}: symlinks and special files are forbidden`);
+  }
+}
+inspectTree(SKILLS);
 const names = [];
 for (const dir of readdirSync(SKILLS).sort()) {
-  if (!statSync(join(SKILLS, dir)).isDirectory()) continue;
+  if (!lstatSync(join(SKILLS, dir)).isDirectory()) continue;
   const where = `skills/${dir}/SKILL.md`;
   let text;
   try {
