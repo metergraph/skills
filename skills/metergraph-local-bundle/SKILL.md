@@ -50,6 +50,8 @@ session.
 
 Ask for the coding client and bundle version. Default to the newest version at
 https://www.metergraph.dev/docs/releases/ and record its `v`-prefixed value.
+That page lists a release only once the site serves its files, so a newer
+version it does not list cannot be downloaded from the site yet; say so.
 Record the application repository directory to return to for setup. Run:
 
 ```sh
@@ -106,6 +108,57 @@ curl -fsSLO "$base/metergraph-byoc-release.json"
 curl -fsSLO "$base/metergraph-byoc-release.json.sig"
 curl -fsSLO "$base/metergraph-byoc-release.json.pem"
 ```
+
+Before cosign, check that each download is the kind of file it claims to be. A
+host can answer a missing file with a web page, and cosign then reports only a
+certificate decoding error:
+
+```sh
+cd "${release_dir:?}" && python3 -I - "${archive:?}" <<'EOF'
+import base64, json, sys
+archive, manifest = sys.argv[1], "metergraph-byoc-release.json"
+def read(name):
+    try: return open(name, "rb").read()
+    except OSError: return b""
+def unbase64(data):
+    try: return base64.b64decode(b"".join(data.split()), validate=True)
+    except ValueError: return b""
+def json_object(data):
+    try: return isinstance(json.loads(data), dict)
+    except ValueError: return False
+checks = {
+    archive: lambda data: data[:2] == b"\x1f\x8b",
+    manifest: json_object,
+    manifest + ".sig": lambda data: bool(unbase64(data)),
+    manifest + ".pem": lambda data: b"-----BEGIN CERTIFICATE-----" in data + unbase64(data),
+}
+files = {name: read(name) for name in checks}
+bad = [name for name, ok in checks.items() if not ok(files[name])]
+if bad and all(files[name].lstrip()[:1] == b"<" for name in bad):
+    sys.exit("Not published: the host returned a web page for " + ", ".join(bad) + ". Verify and extract nothing.")
+if bad: sys.exit("Missing, empty or not release files: " + ", ".join(bad) + ". Verify and extract nothing.")
+print("File types look right. Nothing is verified until cosign and the checksum pass.")
+EOF
+```
+
+If a `curl` reports a 404 or the check prints "Not published", tell the person
+"www.metergraph.dev does not have `<version>` yet". For any other `curl` error
+or check failure, report that exact error instead. Either way, verify and
+extract nothing, and delete only these four downloads so the directory is
+empty again:
+
+```sh
+cd "${release_dir:?}" && rm -f -- "${archive:?}" metergraph-byoc-release.json metergraph-byoc-release.json.sig metergraph-byoc-release.json.pem
+```
+
+A new release reaches the site a few minutes after it is published. Retry
+later, or use a version that https://www.metergraph.dev/docs/releases/ lists.
+A person who can read the GitHub release with their own access may instead
+download the same four files from it, in their own terminal, into the same
+empty directory. Then rerun the file check. Do not run `gh` or use their
+GitHub credentials yourself, and never ask them to sign in or share a token.
+Every check below applies unchanged, because it pins who signed the release,
+not which host served it.
 
 Do not list, extract or run archive contents. Verify the manifest signature
 with exactly this command. The issuer and identity are pinned here, not read
@@ -324,6 +377,7 @@ README section.
 
 | State | Action |
 | --- | --- |
+| A download fails or is not a release file | Extract nothing; delete the four downloads. On a 404 or "Not published", retry later or use a listed version |
 | Signature, manifest, digest or path check fails | Stop; extract and run nothing |
 | Port 8080 belongs to something else | Stop and ask; do not alter it |
 | Registry pull is denied | Person repeats private login; never request the token |
