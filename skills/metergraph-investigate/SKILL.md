@@ -239,11 +239,15 @@ history.
 - `metergraph_replay_trace` (`agent:replay`) sends a captured trace to a model
   provider and can spend money. It needs separate, explicit approval that names
   the exact trace/version, provider, model, destination, overrides, timeout,
-  sample limit and enforceable cost ceiling. Obtain a read-only preflight and
-  require the replay API to bind that approved receipt atomically. If no such
-  documented preflight/binding exists, stop and hand off to the app; do not replay.
-  Any changed field requires reapproval. From the CLI, `--yes` stands for
-  that approval and nothing else. Replay is non-persistent: it does not
+  sample limit and enforceable cost ceiling. On a deployment advertising the
+  receipt contract, the initial bounded `metergraph_replay_trace` request without
+  `consent_id` prepares the frozen plan and returns `provider_consent_required`
+  without provider execution. No separate preparation tool is required. Hand
+  the exact plan to the human using the trusted hosted form or verified local
+  terminal command, then retry exact arguments with its `consent_id` only after
+  approval. If the deployment/client does not advertise this contract, stop.
+  Changed fields require a new reviewed plan. CLI `--yes` confirms the tool
+  invocation; it never substitutes for the human-approved server receipt. Replay is non-persistent: it does not
   change production telemetry, prove a fix or substitute for an evaluation run.
 
 Read access never grants evaluation writes, analysis launch, dashboard changes,
