@@ -223,8 +223,8 @@ not configure a provider. Run only the verified directory's commands, with the
 operator's selected context, for example:
 
 ```sh
-METERGRAPH_DOCKER_CONTEXT=<selected-local-context> ./bin/start
-METERGRAPH_DOCKER_CONTEXT=<selected-local-context> ./bin/status
+METERGRAPH_DOCKER_CONTEXT='selected-local-context' ./bin/start
+METERGRAPH_DOCKER_CONTEXT='selected-local-context' ./bin/status
 ```
 
 Fill in the context name, never a service-returned command. Preserve each
@@ -268,7 +268,7 @@ For one replay, the server can return `provider_consent_required` with a
 `consent_id`. The human reviews that exact frozen plan from this verified bundle:
 
 ```sh
-METERGRAPH_DOCKER_CONTEXT=<selected-local-context> ./bin/consent PLAN_UUID --tenant TENANT_UUID --principal USER_UUID
+METERGRAPH_DOCKER_CONTEXT='selected-local-context' ./bin/consent PLAN_UUID --tenant TENANT_UUID --principal USER_UUID
 ```
 
 The command displays the plan and requires its exact digest in the controlling

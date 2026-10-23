@@ -201,7 +201,7 @@ deployment origin, validate the expected path/ID, and hand it to the owner. The
 owner reviews the full plan and submits the authenticated, session-bound form.
 Never automatically navigate a returned URL or submit that form as the agent.
 For customer-local, local browser approval is refused. The human uses the verified
-installation's `METERGRAPH_DOCKER_CONTEXT=<selected-local-context> ./bin/consent PLAN_UUID --tenant TENANT_UUID --principal USER_UUID`, retaining the same independently selected local context used for startup.
+installation's `METERGRAPH_DOCKER_CONTEXT='selected-local-context' ./bin/consent PLAN_UUID --tenant TENANT_UUID --principal USER_UUID`, retaining the same independently selected local context used for startup.
 It displays the complete server plan and requires its exact digest in their
 controlling terminal through the intended signed Docker container. Never guess
 IDs, pipe the digest, add `--yes` or automate the human approval. Docker
