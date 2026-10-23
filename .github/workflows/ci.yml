@@ -27,6 +27,9 @@ jobs:
       - name: Validate skills
         run: node scripts/validate.mjs
 
+      - name: Security regressions
+        run: python3 scripts/test_security.py
+
       - name: Build skill archives
         run: sh scripts/package.sh
 
