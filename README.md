@@ -14,6 +14,22 @@ The skills follow the [Agent Skills](https://agentskills.io/) format. They are
 instructions, not code: they add no tools and no access, and everything they do goes
 through the Metergraph connection and key you give your agent.
 
+## Transport and provider consent compatibility
+
+The customer-local workflow requires a signed bundle and a released client that
+support authenticated Docker transport. It does not send credentials to host
+HTTP or use local browser sign-in/consent. Older local setup instructions must
+stop at that compatibility boundary; a healthy listener or issued key is not
+proof. Hosted authenticated HTTPS remains a separate deployment route.
+
+Provider-backed actions also require trusted human execution consent, separate
+from scopes, chat approval and CLI confirmation. Deployments returning
+`provider_consent_unavailable` pause agent analysis, classification and experiment
+starts. Supported replay receipts require human review of the exact frozen plan
+and one exact retry with `consent_id`; agents cannot approve receipts. Reads and
+deterministic previews remain available when advertised. See the `metergraph`
+skill for the complete gate, which takes precedence over historical examples.
+
 ## Quick start
 
 ```sh
@@ -112,7 +128,8 @@ Connect Metergraph to your agent and answer questions about the docs.
 
 ### metergraph-local-bundle
 
-Verify and start the signed commercial customer-local bundle, then hand over to
+Verify and start a signed commercial customer-local bundle with authenticated
+Docker transport; stop unsupported clients before handing over to
 `metergraph setup` without exposing local credentials or replacing existing data.
 
 **Use when:**
