@@ -109,10 +109,10 @@ ChatGPT) use MCP. Use the `metergraph` skill, or follow the
 [MCP server guide](https://www.metergraph.dev/docs/guides/mcp-server/) lists the tools,
 and which access role each one needs.
 
-Investigating and choosing a workload need read access (the Metadata role). Saving evals
-and starting analyses need loop access (the Debug role plus evaluation writes, evaluation
-previews and analysis starts), which a workspace owner grants. `metergraph-model-swap`
-checks for it before the loop starts and says how to get it on your deployment.
+Investigating and choosing a workload need the Metadata role. Saving evals and starting
+analyses need the Debug role plus Allow evaluation writes, Allow evaluation previews and
+Allow analysis starts, which a workspace owner grants. `metergraph-model-swap` checks for
+them before it starts and says how to get them on your deployment.
 
 ## Available skills
 
@@ -171,11 +171,11 @@ the report.
 - Starting a model-swap analysis from your agent
 - Reading what a finished analysis recommends
 
-### The model-swap loop
+### The model-swap workflow
 
 Six skills take a workload from choice to a rerun. You choose, define and rerun from your
 coding agent, and read the report and inspect evidence in the Metergraph app. Start with
-`metergraph-model-swap`; it loads the others as the loop reaches them.
+`metergraph-model-swap`; it loads the others as the workflow reaches them.
 
 ```
 choose workload → choose traces and models → define or refine eval → run analysis
@@ -184,7 +184,7 @@ choose workload → choose traces and models → define or refine eval → run a
 
 | Skill | Stage |
 | --- | --- |
-| [`metergraph-model-swap`](skills/metergraph-model-swap/SKILL.md) | The whole loop: where you are, what comes next, and the rules every stage keeps |
+| [`metergraph-model-swap`](skills/metergraph-model-swap/SKILL.md) | The whole workflow: where you are, what comes next, and the rules every stage keeps |
 | [`metergraph-workloads`](skills/metergraph-workloads/SKILL.md) | Choose a workload: rank by spend with its source, flag spikes and suspect data, check readiness |
 | [`metergraph-candidates`](skills/metergraph-candidates/SKILL.md) | Choose traces and models: environment, candidates, residency and the route settings to change |
 | [`metergraph-evals`](skills/metergraph-evals/SKILL.md) | Define or refine the eval: checks and a rubric from good traces and your code, tested before use |
