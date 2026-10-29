@@ -42,6 +42,12 @@ Then ask your agent:
 Help me connect Metergraph to this agent.
 ```
 
+Or, with no account at all:
+
+```
+Check this repo's models against Metergraph's pricing and flag any I'm overpaying for.
+```
+
 The `metergraph` skill asks which deployment you use (hosted, the customer-local bundle,
 customer-owned AWS or the open-source server) and walks you through the connection one
 step at a time, without asking for keys in chat.
@@ -100,7 +106,7 @@ Code, `.agents/skills/` for Codex, or `.cursor/skills/` for Cursor.
 
 ## Connect Metergraph
 
-Every skill except `metergraph` and `metergraph-local-bundle` needs your agent connected
+Every skill except `metergraph`, `metergraph-price-check` and `metergraph-local-bundle` needs your agent connected
 to a workspace, through either the [Metergraph CLI](https://github.com/metergraph/cli) or
 the Agent Access MCP server. Both reach the same tools with the same key: agents with a
 shell (Claude Code, Codex, Cursor) use the CLI, and clients without one (Claude Desktop,
@@ -125,6 +131,19 @@ Connect Metergraph to your agent and answer questions about the docs.
 - Setting up Metergraph for the first time, on any deployment
 - Connecting Claude Desktop, Claude Code, Codex or Cursor to a workspace
 - Asking what Metergraph can do in your edition
+
+### metergraph-price-check
+
+Find the models a repository calls, look up their list prices in Metergraph's free public
+[Pricing API](https://www.metergraph.dev/docs/reference/pricing-api/), and flag calls
+that look overpriced for what they do. Needs no account or key. It reports leads, not
+answers, and ends by offering Metergraph setup so a swap can be tested on real traffic.
+
+**Use when:**
+
+- Asking whether this codebase pays for more model than its tasks need
+- Getting list prices and rough per-call costs for the models in a repository
+- Taking a first look before setting Metergraph up
 
 ### metergraph-local-bundle
 
@@ -193,6 +212,10 @@ choose workload → choose traces and models → define or refine eval → run a
 | [`metergraph-iterate`](skills/metergraph-iterate/SKILL.md) | Refine and rerun: one change, a new approved run, an honest comparison |
 
 ## Example prompts
+
+```
+Check this repo's LLM calls against Metergraph's pricing and flag cheaper options.
+```
 
 ```
 Use Metergraph to show my workspace context and capabilities.
