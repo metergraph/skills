@@ -1,7 +1,7 @@
 {
   "name": "metergraph",
   "version": "0.7.0",
-  "description": "Set up Metergraph, investigate workspace evidence, and choose, evaluate, analyze and rerun model swaps from your coding agent",
+  "description": "Price-check a repository's models, set up Metergraph, investigate workspace evidence, and choose, evaluate, analyze and rerun model swaps from your coding agent",
   "author": {
     "name": "Metergraph",
     "url": "https://www.metergraph.dev"
@@ -9,5 +9,5 @@
   "homepage": "https://github.com/metergraph/skills",
   "repository": "https://github.com/metergraph/skills",
   "license": "Apache-2.0",
-  "keywords": ["metergraph", "llm", "model-swap", "evals", "agent-access"]
+  "keywords": ["metergraph", "llm", "model-swap", "evals", "agent-access", "pricing"]
 }
