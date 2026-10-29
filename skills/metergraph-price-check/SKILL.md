@@ -34,10 +34,12 @@ only credentials.
 ## 1. Find the LLM calls
 
 Search the repository, skipping `node_modules`, virtual environments, build
-output, vendored code and lockfiles. With `rg`, for example:
+output, vendored code, lockfiles and agent skill folders (which name models
+as examples). With `rg`, for example:
 
 ```sh
 rg -n --hidden -g '!.git' -g '!node_modules' -g '!*.lock' -g '!package-lock.json' \
+  -g '!.claude' -g '!.agents' -g '!.cursor' \
   -e '\bmodel\s*[:=]' -e 'model_name|modelId|model_id|MODEL' \
   -e 'gpt-[0-9]|\bo[134]-|claude-|gemini-|mistral-|ministral|codestral|llama|deepseek|grok-|command-r|qwen'
 ```
@@ -62,7 +64,9 @@ For each call, record:
   generation).
 - **model ID** exactly as written, and the **provider or channel** it bills
   through. The SDK or base URL tells you: OpenAI SDK pointed at OpenRouter is
-  the `openrouter-api` channel, not OpenAI.
+  the `openrouter-api` channel, not OpenAI. Google's `genai.Client` bills
+  through `google-api` unless the code or env selects Vertex AI
+  (`vertexai=True`, `GOOGLE_GENAI_USE_VERTEXAI`); say which you assumed.
 - **token size hints**: `max_tokens` / `max_output_tokens`, a fixed label set
   or JSON schema for the output, how long the prompt template is, and
   whether it carries a whole document or a short field.
@@ -84,7 +88,8 @@ whole check:
    not paste it into the conversation. Use it to match an ID the lookup does
    not recognize to a catalog alias (each model lists `aliases` with
    `provider`, `model` and `channel`) and to confirm a candidate exists before
-   you price it. The listing has no rates; only lookup returns prices.
+   you price it. Its `catalog.version` is the catalog date for the report.
+   The listing has no rates; only lookup returns prices.
 2. **One batched lookup** for every model the code uses plus the candidates
    from step 3, up to 100 records:
 
@@ -139,8 +144,9 @@ difficulty clear. Leave those as "no lead" rather than guessing.
 
 For each lead, pick two or three candidates that exist in the catalog:
 
-- the smaller model in the same family, which needs the least prompt rework
-  and is the most likely to hold up;
+- the smaller model in the same family (or the latest smaller sibling when
+  the current generation has none), which needs the least prompt rework and
+  is the most likely to hold up;
 - one peer from another vendor in the same price class;
 - optionally one very cheap model as a floor.
 
@@ -152,7 +158,9 @@ about four characters per token for the template plus a typical input, and
 compute `input_tokens × input_per_mtok / 1e6 + output_tokens ×
 output_per_mtok / 1e6` for the current model and each candidate. State the
 token assumption next to the number. Without a clear size, give the price
-ratio per 1M tokens and no per-call figure. Never multiply by a call volume
+ratio per 1M tokens and no per-call figure. Reasoning models may bill
+hidden reasoning tokens as output, so call their figure a lower bound.
+Never multiply by a call volume
 you do not know; ask the person for one if they want a monthly figure.
 
 ## 4. Report
@@ -160,7 +168,7 @@ you do not know; ask the person for one if they want a monthly figure.
 Lead with the answer in one or two sentences, then one table:
 
 ```
-Models this repo calls (list prices, USD per 1M tokens, catalog <as_of date>)
+Models this repo calls (list prices, USD per 1M tokens, catalog <catalog.version>)
 
 | Where | Task | Model (provider) | In / Out | Lead |
 | --- | --- | --- | --- | --- |
@@ -174,8 +182,10 @@ Then, in plain words:
   cheaper model still passes on your traffic**; only a test on real requests
   can.
 - Anything not priced, set at runtime or uncertain, with the reason.
-- The price source: Metergraph's public Pricing API, catalog date from the
-  response.
+- The price source: Metergraph's public Pricing API and its catalog
+  version, or each price's `effective_from` if you skipped the catalog read.
+  Link `source_url` for any price that looks surprising, so the person can
+  check it at the provider.
 
 Do not edit the code to swap models. If the person asks for the change, make
 it only on their explicit request and say it is untested.
