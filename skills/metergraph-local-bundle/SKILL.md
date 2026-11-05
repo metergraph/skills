@@ -218,8 +218,9 @@ Docker's supported private credential input and the selected local context.
 Wait for confirmation only; never read Docker's credential file.
 
 Explain that startup verifies the manifest and pinned images, starts the selected
-containers, and on a new database sends synthetic `local-demo` traffic. It does
-not configure a provider. Run only the verified directory's commands, with the
+containers, and sends no traces. Synthetic `local-demo` traffic is opt-in: the
+workspace owner can choose Load demo data on the empty dashboard, or run
+`./bin/demo-ingest`. It does not configure a provider. Run only the verified directory's commands, with the
 operator's selected context, for example:
 
 ```sh
