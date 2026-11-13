@@ -1,6 +1,6 @@
 {
   "name": "metergraph",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Price-check a repository's models, set up Metergraph, investigate workspace evidence, and choose, evaluate, analyze and rerun model swaps from your coding agent",
   "author": {
     "name": "Metergraph",
@@ -16,6 +16,5 @@
     "evals",
     "agent-access",
     "pricing"
-  ],
-  "icon": "./.claude-plugin/icon.png"
+  ]
 }

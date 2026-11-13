@@ -1,7 +1,6 @@
 """Build/check the source-only directory submission from canonical skill files."""
 import argparse
 import os
-import json
 import struct
 from pathlib import Path
 import stat
@@ -25,8 +24,8 @@ def expected_files():
     files.update(snapshot(ROOT / '.claude-plugin', '.claude-plugin'))
     # The submission is a plugin, not the development repository's marketplace.
     files.pop('.claude-plugin/marketplace.json')
-    manifest = json.loads(files['.claude-plugin/plugin.json'])
-    icon = files[manifest['icon'].removeprefix('./')]
+    # The directory discovers this default filename without a manifest icon field.
+    icon = files['.claude-plugin/icon.png']
     if icon[:8] != b'\x89PNG\r\n\x1a\n' or len(icon) >= 2 * 1024 * 1024:
         raise ValueError('Icon must be a PNG under 2 MB')
     width, height = struct.unpack('>II', icon[16:24])
