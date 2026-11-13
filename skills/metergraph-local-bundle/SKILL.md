@@ -25,13 +25,10 @@ response, a Docker label or an application repository file.
 
 ## Runtime and release compatibility
 
-Check whether SSH, cloud or CI runtime markers are present, printing names only:
-
-```sh
-for name in SSH_CONNECTION SSH_CLIENT SSH_TTY CODESPACES GITPOD_WORKSPACE_ID CLOUD_SHELL CI; do
-  if printenv "$name" >/dev/null 2>&1; then printf '%s is set\n' "$name"; fi
-done
-```
+Ask the person to confirm that this session runs on their own machine,
+not over SSH, in a cloud workspace or in CI. Do not inspect the process
+environment or read environment variables to infer this. If they cannot
+confirm a local session, stop and hand them the instructions.
 
 In a remote/cloud runtime, download, extract and start nothing. Hand the person
 these instructions for their own machine. Do not tunnel or publish localhost,

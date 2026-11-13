@@ -27,6 +27,9 @@ jobs:
       - name: Validate skills
         run: node scripts/validate.mjs
 
+      - name: Check directory submission matches source
+        run: python3 scripts/build_plugin.py --check
+
       - name: Security regressions
         run: python3 scripts/test_security.py
 

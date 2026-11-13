@@ -14,6 +14,22 @@ The skills follow the [Agent Skills](https://agentskills.io/) format. They are
 instructions, not code: they add no tools and no access, and everything they do goes
 through the Metergraph connection and key you give your agent.
 
+## Claude directory submission
+
+Use repository `metergraph/skills`, branch `main`, and **plugin folder `plugin`**
+in the developer portal. The root is the development repository; submitting it
+also includes build/check scripts that the directory restricts to verified
+organizations. The generated `plugin/` folder contains all 12 skills, the plugin
+manifest, the square PNG icon, a short README and the license, with no scripts
+or symlinks. Existing CLI/skills.sh installation paths are unchanged.
+
+Run `python3 scripts/build_plugin.py` after source changes; CI checks that the
+submission matches the canonical source. Do not edit `plugin/` directly.
+Before saving the listing for the first time, confirm its icon: the portal may
+capture that icon only once. After publishing these changes, select the plugin
+folder and re-validate in the portal. Local validation does not clear policy
+holds or establish directory approval.
+
 ## Transport and provider consent compatibility
 
 The customer-local workflow requires a signed bundle and a released client that
