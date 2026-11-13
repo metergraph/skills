@@ -1,5 +1,10 @@
 # Metergraph
 
+[Privacy Policy](https://www.metergraph.dev/privacy) ·
+[Support](https://github.com/metergraph/skills/issues) ·
+[Documentation](https://www.metergraph.dev/docs/) ·
+[Terms of Service](https://www.metergraph.dev/terms)
+
 Twelve skills to check model list prices, connect Metergraph, investigate LLM
 usage, and evaluate model changes against authorized workspace evidence.
 
@@ -32,7 +37,7 @@ Try these prompts:
   captured prompts to the model providers configured for that workspace. The user
   chooses models, scope and budget before execution. Provider retention and privacy
   terms also apply; review those for the selected provider before authorizing a run.
-- **Documentation and releases:** setup may access `https://www.metergraph.dev` and
+- **Public guides and releases:** setup may access https://www.metergraph.dev and
   public GitHub releases. Customer-local installation requires the signed bundle's
   documented verification and supported transport. Installation and execution are
   explicit setup actions, not background behavior on plugin installation.
