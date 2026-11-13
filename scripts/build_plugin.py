@@ -32,15 +32,7 @@ def expected_files():
     if width != height or not 512 <= width <= 2048:
         raise ValueError('Icon must be square, 512–2048 pixels')
     files['LICENSE.txt'] = (ROOT / 'LICENSE').read_bytes()
-    files['README.md'] = (
-        '# Metergraph\n\n'
-        'Twelve skills for public model pricing, setup, investigation and model-swap analysis.\n\n'
-        'Price checking needs no account. Workspace workflows require a separately\n'
-        'authorized Metergraph connection; this plugin adds no MCP server, hooks or tools.\n'
-        'Never provide secrets in chat. Paid actions require explicit approval.\n\n'
-        'Source and installation: https://github.com/metergraph/skills\n\n'
-        'Generated from the canonical skills and manifest by scripts/build_plugin.py.\n'
-    ).encode()
+    files['README.md'] = (ROOT / 'PLUGIN_README.md').read_bytes()
     for name, content in files.items():
         if Path(name).suffix not in {'.md', '.txt', '.json', '.png'}:
             raise ValueError(f'Unsupported submission file: {name}')
