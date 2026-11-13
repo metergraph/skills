@@ -44,7 +44,7 @@ customer agreement. Customer-operated deployments and model providers have their
 own retention settings. Reports can also be saved locally when the user requests it.
 Never put credentials or raw trace content in support reports.
 
-See [Hosted Privacy](https://www.metergraph.dev/privacy), the applicable
+See [Privacy Policy](https://www.metergraph.dev/privacy), the applicable
 [PSL privacy policy](https://www.psl.com/legal), and
 [Terms of Service](https://www.metergraph.dev/terms). For data access or deletion,
 contact studio-legal@psl.com.
@@ -58,7 +58,7 @@ a successful connection alone does not prove a completed analysis.
 
 - [Documentation](https://www.metergraph.dev/docs/)
 - [Setup guide](https://www.metergraph.dev/docs/start/first-trace/)
-- [Product support and issues](https://github.com/metergraph/skills/issues)
+- [Support](https://github.com/metergraph/skills/issues)
 - [Private security reports](https://github.com/metergraph/skills/security/advisories/new)
 
 Source: [metergraph/skills](https://github.com/metergraph/skills). Apache-2.0 license.
