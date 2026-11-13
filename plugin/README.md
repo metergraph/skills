@@ -1,5 +1,10 @@
 # Metergraph
 
+[Privacy Policy](https://www.metergraph.dev/privacy) ·
+[Support](https://github.com/metergraph/skills/issues) ·
+[Documentation](https://www.metergraph.dev/docs/) ·
+[Terms of Service](https://www.metergraph.dev/terms)
+
 Twelve skills to check model list prices, connect Metergraph, investigate LLM
 usage, and evaluate model changes against authorized workspace evidence.
 
@@ -32,7 +37,7 @@ Try these prompts:
   captured prompts to the model providers configured for that workspace. The user
   chooses models, scope and budget before execution. Provider retention and privacy
   terms also apply; review those for the selected provider before authorizing a run.
-- **Documentation and releases:** setup may access `https://www.metergraph.dev` and
+- **Public guides and releases:** setup may access https://www.metergraph.dev and
   public GitHub releases. Customer-local installation requires the signed bundle's
   documented verification and supported transport. Installation and execution are
   explicit setup actions, not background behavior on plugin installation.
@@ -44,7 +49,7 @@ customer agreement. Customer-operated deployments and model providers have their
 own retention settings. Reports can also be saved locally when the user requests it.
 Never put credentials or raw trace content in support reports.
 
-See [Hosted Privacy](https://www.metergraph.dev/privacy), the applicable
+See [Privacy Policy](https://www.metergraph.dev/privacy), the applicable
 [PSL privacy policy](https://www.psl.com/legal), and
 [Terms of Service](https://www.metergraph.dev/terms). For data access or deletion,
 contact studio-legal@psl.com.
@@ -58,7 +63,7 @@ a successful connection alone does not prove a completed analysis.
 
 - [Documentation](https://www.metergraph.dev/docs/)
 - [Setup guide](https://www.metergraph.dev/docs/start/first-trace/)
-- [Product support and issues](https://github.com/metergraph/skills/issues)
+- [Support](https://github.com/metergraph/skills/issues)
 - [Private security reports](https://github.com/metergraph/skills/security/advisories/new)
 
 Source: [metergraph/skills](https://github.com/metergraph/skills). Apache-2.0 license.
