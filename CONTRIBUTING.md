@@ -10,3 +10,7 @@ Thanks for helping improve the Metergraph skills.
    request. Use synthetic data in examples.
 4. Run `node scripts/validate.mjs` and
    `python3 scripts/check_publication.py origin/main` before pushing.
+
+5. After changing skills or plugin metadata, run `python3 scripts/build_plugin.py`
+   and commit the generated `plugin/` files with the source changes. CI checks
+   exact parity. Never edit the generated directory directly.
