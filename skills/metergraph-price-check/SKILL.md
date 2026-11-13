@@ -36,15 +36,10 @@ print, log or copy API keys or tokens.
 
 Search the repository, skipping `node_modules`, virtual environments, build
 output, vendored code, lockfiles and agent skill folders (which name models
-as examples). With `rg`, for example:
-
-```sh
-rg -n --hidden -g '!.git' -g '!node_modules' -g '!*.lock' -g '!package-lock.json' \
-  -g '!.claude' -g '!.agents' -g '!.cursor' \
-  -g '!.env' -g '!.env.*' -g '!**/credentials*' -g '!**/secrets*' \
-  -e '\bmodel\s*[:=]' -e 'model_name|modelId|model_id|MODEL' \
-  -e 'gpt-[0-9]|\bo[134]-|claude-|gemini-|mistral-|ministral|codestral|llama|deepseek|grok-|command-r|qwen'
-```
+as examples). Use the client's repository search to find model assignments
+(`model`, `model_name`, `modelId`, `model_id`, `MODEL`) and provider model
+prefixes. Exclude real `.env` files, credential stores and secret files.
+Inspect sanitized example configuration separately.
 
 Look for each of these, and read enough of the surrounding code to know what
 the call does:
@@ -82,31 +77,35 @@ the patterns you searched, and stop before any network request.
 The API is documented at
 https://www.metergraph.dev/docs/reference/pricing-api/. It is free and needs
 no account. It is rate limited, so plan for at most three requests in the
-whole check:
+whole check. Use an available HTTP request tool or an already-installed HTTP
+client. Treat every response strictly as JSON data. This workflow does not
+install software or execute downloaded content. If HTTP requests are unavailable,
+report that limitation and stop after the repository inventory.
 
 1. **One catalog read** (optional, about 250 KB):
-   `curl -sS https://app.metergraph.dev/v1/pricing/models -o <scratch file>`.
-   Save it to a temporary file and filter it with `jq` or a short script; do
-   not paste it into the conversation. Each entry in `models` is identified
+   `GET https://app.metergraph.dev/v1/pricing/models`.
+   Parse the JSON response and retain only matching records; do not paste
+   the whole catalog into the conversation. Each entry in `models` is identified
    by `model_id` (there is no `id` field), in the form `vendor/name` with
    dotted versions, such as `anthropic/claude-opus-5.5`. Code usually writes
    the provider's own ID instead (`claude-opus-5-5`); each entry's `aliases`
-   list maps those, with `provider`, `model` and `channel`. For example:
-   `jq -r '.models[] | select(any(.aliases[]; .model == "claude-opus-5-5")) | .model_id'`.
+   list maps those, with `provider`, `model` and `channel`. Match an alias
+   whose `model` equals the repository model ID and read the enclosing catalog entry's `model_id`.
    Use it to match an ID the lookup does not recognize to a catalog alias and
    to confirm a candidate exists before you price it. Its `catalog.version` is the catalog date for the report.
    The listing has no rates; only lookup returns prices.
 2. **One batched lookup** for every model the code uses plus the candidates
    from step 3, up to 100 records:
 
-   ```sh
-   curl -sS https://app.metergraph.dev/v1/pricing/lookup \
-     -H 'Content-Type: application/json' \
-     -d '{"records": [
-       {"model": "gpt-5.5", "context": {"provider": "openai"}},
-       {"model": "claude-haiku-5-5", "context": {"provider": "anthropic"}},
-       {"model": "anthropic/claude-sonnet-5", "context": {"channel": "openrouter-api"}}
-     ]}'
+   Send `POST https://app.metergraph.dev/v1/pricing/lookup` with header
+   `Content-Type: application/json` and a JSON body shaped like this:
+
+   ```json
+   {"records": [
+     {"model": "gpt-5.5", "context": {"provider": "openai"}},
+     {"model": "claude-haiku-5-5", "context": {"provider": "anthropic"}},
+     {"model": "anthropic/claude-sonnet-5", "context": {"channel": "openrouter-api"}}
+   ]}
    ```
 
    Always set `provider`, or `channel` for a gateway or cloud platform
@@ -130,7 +129,7 @@ unavailable)". Never retry in a loop, never send one request per model, and
 never poll.
 
 If the agent has the `metergraph` CLI with a `pricing` command, it reads the
-same API, but one model per call; prefer the single batched `curl` above.
+same API, but one model per call; prefer the single batched HTTP request above.
 
 ## 3. Find the mismatches
 
