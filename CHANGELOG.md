@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `metergraph-local-bundle` accepts a customer-local release signed by the release workflow under either the `PioneerSquareLabs` or the `metergraph` GitHub owner. The issuer, repository, workflow and ref stay pinned; only the owner may differ, matching the identity the release pages publish.
 - `metergraph-price-check` hands off to setup correctly when only the workflow skills are installed: it uses the `metergraph` setup skill if present, otherwise https://www.metergraph.dev/SKILL.md, then `metergraph-onboarding`. It also names the catalog's `model_id` field and shows how aliases map code IDs such as `claude-opus-5-5` to it.
 - Add `metergraph-price-check`, which needs no Metergraph account: it finds the model IDs a repository calls, prices them with one batched request to the public Pricing API, flags calls that look overpriced for their task as leads with list prices and rough per-call estimates, and offers Metergraph setup to validate a swap on real traffic. It says that the open-source server records and prices traffic but does not run swap analysis.
 - Start a classification from the agent with `metergraph_start_classification` when nothing is classified yet and the person does not want to wait, or the traffic has changed. It needs Allow analysis starts, asks for approval first because it sends captured content to the provider, and is never a routine step before an analysis.

@@ -98,7 +98,7 @@ cosign verify-blob \
   --certificate metergraph-byoc-release.json.pem \
   --signature metergraph-byoc-release.json.sig \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com \
-  --certificate-identity-regexp '^https://github\.com/PioneerSquareLabs/metergraph-internal/\.github/workflows/byoc-release\.yml@refs/(heads/main|tags/v.+)$' \
+  --certificate-identity-regexp '^https://github\.com/(PioneerSquareLabs|metergraph)/metergraph-internal/\.github/workflows/byoc-release\.yml@refs/(heads/main|tags/v.+)$' \
   metergraph-byoc-release.json
 ```
 

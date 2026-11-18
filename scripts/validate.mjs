@@ -18,7 +18,7 @@ const PRIVATE = [new RegExp("\\b" + "MET" + "-\\d+\\b", "i"), new RegExp("linear
 // page also publishes. Only this whole identity is exempt; any other mention of
 // the repository is still reported. Built from parts, like PRIVATE.
 const ALLOWED = [
-  String.raw`^https://github\.com/PioneerSquareLabs/` + "metergraph" + "-internal" +
+  String.raw`^https://github\.com/(PioneerSquareLabs|metergraph)/` + "metergraph" + "-internal" +
     String.raw`/\.github/workflows/byoc-release\.yml@refs/(heads/main|tags/v.+)$`,
 ];
 const errors = [];
