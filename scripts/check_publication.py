@@ -23,7 +23,7 @@ PATTERNS = {
 # page also publishes. Only this whole identity is exempt; any other mention of
 # the repository is still reported. Built from parts, like PATTERNS.
 ALLOWED = (
-    r"^https://github\.com/PioneerSquareLabs/" + "metergraph-internal"
+    r"^https://github\.com/(PioneerSquareLabs|metergraph)/" + "metergraph-internal"
     + r"/\.github/workflows/byoc-release\.yml@refs/(heads/main|tags/v.+)$",
 )
 
